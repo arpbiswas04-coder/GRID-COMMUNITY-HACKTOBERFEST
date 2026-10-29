@@ -1,0 +1,9 @@
+{
+  "name": "team-zenith",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Typing Speed Trainer - Hack Day Haldia x GRID community starter",
+  "scripts": {
+    "start": "npx --yes serve ."
+  }
+}
