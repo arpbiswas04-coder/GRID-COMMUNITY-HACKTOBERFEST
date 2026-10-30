@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en" data-theme="neo-yellow">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Type.e — Type Fast. Drive Faster.</title>
+  <meta name="description" content="Type.e Racing Arena: High-speed typing circuit with real-time previous-session ghost telemetry, character feedback, and keyboard error heatmap.">
+
+  <!-- Google Fonts: Space Grotesk, Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800;900&family=Outfit:wght@700;800;900&family=Space+Grotesk:wght@500;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Core & Race Stylesheets -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/race.css">
+</head>
+<body>
+
+  <!-- ======================================================================
+       COMPACT HEADER
+       ====================================================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="home.html" class="brand-logo" aria-label="Type.e Home">
+        <span class="brand-text">TYPE.<span class="brand-box">E</span></span>
+      </a>
+      <div class="header-divider"></div>
+      <span class="brand-tagline">TYPE FAST. DRIVE FASTER.</span>
+    </div>
+
+    <!-- Center Navigation -->
+    <nav class="header-nav" aria-label="Dashboard navigation">
+      <a href="home.html" class="nav-link">HOME</a>
+      <a href="race.html" class="nav-link active">RACE TRACK</a>
+      <a href="practice.html" class="nav-link">PRACTICE</a>
+      <a href="analytics.html" class="nav-link">ANALYTICS</a>
+    </nav>
+
+    <!-- Right Quick Controls -->
+    <div class="header-tools">
+      <select id="keyboard-layout-select" class="select-control" aria-label="Select Keyboard Layout">
+        <option value="qwerty">QWERTY</option>
+        <option value="dvorak">Dvorak</option>
+        <option value="colemak">Colemak</option>
+      </select>
+
+      <select id="theme-select" class="select-control" aria-label="Select Visual Theme">
+        <option value="neo-yellow">Neo Yellow</option>
+        <option value="dark-arcade">Dark Arcade</option>
+        <option value="light-minimal">Light Minimal</option>
+      </select>
+
+      <button type="button" id="btn-sound-toggle" class="btn-sm" aria-label="Toggle Sound Effects">
+        🔇 SOUND: OFF
+      </button>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       MAIN DASHBOARD GRID: Left Telemetry Sidebar + Right Racing/Typing Arena
+       ====================================================================== -->
+  <div class="race-container">
+
+    <!-- --------------------------------------------------------------------
+         A. LEFT TELEMETRY SIDEBAR (Personal Bests removed as requested)
+         -------------------------------------------------------------------- -->
+    <aside class="race-sidebar" aria-label="Live Telemetry">
+      <div class="neo-card">
+        <div class="panel-header">
+          <h2>⚡ TELEMETRY</h2>
+          <span class="badge badge-yellow">LIVE</span>
+        </div>
+
+        <!-- Big Status Indicator -->
+        <div id="test-status-pill" class="status-pill status-ready">
+          🏁 READY TO RACE
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="sidebar-metrics">
+          <div class="metric-card hero-metric">
+            <div class="metric-label">WORDS PER MIN</div>
+            <div id="stat-wpm" class="metric-num">0</div>
+            <div style="font-size:0.68rem; font-weight:800; text-transform:uppercase; margin-top:0.2rem;">NET SPEED</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">ACCURACY</div>
+            <div id="stat-accuracy" class="metric-num" style="font-size: 1.45rem;">100%</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">TIME LEFT</div>
+            <div id="stat-timer" class="metric-num" style="font-size: 1.45rem; color: var(--color-incorrect);">60s</div>
+          </div>
+        </div>
+
+        <!-- Detailed Character Counts -->
+        <div style="margin-top: 0.85rem;">
+          <div class="stat-item">
+            <span class="stat-item-label">Total Attempted:</span>
+            <span id="stat-total-chars" class="stat-item-val">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item-label">Correct Chars:</span>
+            <span id="stat-correct-chars" class="stat-item-val" style="color: var(--color-correct);">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item-label">Mistakes / Errors:</span>
+            <span id="stat-incorrect-chars" class="stat-item-val" style="color: var(--color-incorrect);">0</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- --------------------------------------------------------------------
+         B. MAIN RIGHT STAGE (Track, Passage, Weak-Keys, Colourful Keyboard)
+         -------------------------------------------------------------------- -->
+    <main class="race-main-stage">
+
+      <!-- 1. COMPACT RACING CIRCUIT -->
+      <section class="track-card" aria-label="Race Track">
+        <div class="track-header">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <h2 style="font-size:1.05rem;">🏎️ SPRINT CIRCUIT</h2>
+            <span class="badge badge-dark">TELEMETRY</span>
+          </div>
+          <div id="ahead-behind-indicator" class="delta-badge neutral">
+            ✨ FIRST SESSION (RECORDING GHOST PACE)
+          </div>
+        </div>
+
+        <!-- Track Canvas -->
+        <div class="track-canvas-wrapper">
+          <canvas id="racing-canvas"></canvas>
+        </div>
+
+        <!-- Track Telemetry HUD -->
+        <div class="track-telemetry">
+          <div class="car-telemetry-box">
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+              <div class="car-badge-pip pip-player"></div>
+              <strong style="text-transform:uppercase;">Player (#01)</strong>
+              <span id="telemetry-player-progress" style="color:var(--color-muted);">0% Done</span>
+            </div>
+            <strong id="telemetry-player-wpm" style="font-family:var(--font-mono); font-size:1rem;">0 WPM</strong>
+          </div>
+
+          <div id="ghost-telemetry-box" class="car-telemetry-box">
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+              <div class="car-badge-pip pip-ghost"></div>
+              <strong style="text-transform:uppercase;">Prev Session (#00)</strong>
+              <span id="telemetry-ghost-progress" style="color:var(--color-muted);">0% Done</span>
+            </div>
+            <strong id="telemetry-ghost-wpm" style="font-family:var(--font-mono); font-size:1rem;">0 WPM</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. TYPING PASSAGE SECTION -->
+      <section class="passage-card" aria-label="Typing Passage">
+        <div class="panel-header" style="margin-bottom:0.5rem;">
+          <h3 style="font-size:0.9rem;">📝 PASSAGE SPRINT</h3>
+          <button type="button" id="btn-restart" class="btn-sm btn-primary">⚡ Restart Race</button>
+        </div>
+
+        <div style="position:relative;">
+          <!-- Character feedback box -->
+          <div id="passage-display" class="passage-display" tabindex="0">
+            <!-- Characters injected dynamically -->
+          </div>
+
+          <!-- CRITICAL: Single source of truth hidden input -->
+          <input type="text" id="typing-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type passage text here" />
+        </div>
+
+        <!-- Progress bar -->
+        <div class="passage-footer-row">
+          <span>PROGRESS</span>
+          <div class="passage-progress-track">
+            <div id="passage-progress-fill" class="passage-progress-bar"></div>
+          </div>
+          <span id="passage-progress-text">0%</span>
+        </div>
+      </section>
+
+      <!-- 3. WEAK-KEY SUGGESTIONS BAR (Directly above keyboard) -->
+      <section class="weak-keys-strip" aria-label="Weak Key Suggestions">
+        <div class="weak-keys-left">
+          <span class="weak-keys-label">⚠️ WEAKEST KEYS DETECTED:</span>
+          <div id="weak-chips-list" class="weak-chips-list">
+            <!-- Dynamically populated chips -->
+          </div>
+        </div>
+        <button type="button" id="btn-quick-drill" class="btn-sm btn-primary">
+          🎯 Practice Weak Keys
+        </button>
+      </section>
+
+      <!-- 4. COLOURFUL VIRTUAL KEYBOARD & HEATMAP -->
+      <section class="keyboard-card" aria-label="Heatmap Keyboard">
+        <div class="kb-top-bar">
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <h3 style="font-size:0.9rem;">⌨️ ERROR HEATMAP</h3>
+            <span class="badge badge-yellow">LIVE TELEMETRY</span>
+          </div>
+
+          <!-- Heatmap Legend -->
+          <div class="kb-legend">
+            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-untested)"></div> Untested</div>
+            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-excellent)"></div> &lt;3%</div>
+            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-low)"></div> 3-8%</div>
+            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-med)"></div> 8-15%</div>
+            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-high)"></div> 15-25%</div>
+            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-critical)"></div> &gt;25% Err</div>
+          </div>
+        </div>
+
+        <!-- Virtual Keyboard Layout Grid -->
+        <div id="virtual-keyboard" class="virtual-kb">
+          <!-- Dynamically populated keys -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ======================================================================
+       RESULTS MODAL
+       ====================================================================== -->
+  <div id="modal-results" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2>🏁 SPRINT RESULTS</h2>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="race-winner-banner" class="race-outcome-banner winner-player">
+          🏆 SPRINT COMPLETE!
+        </div>
+
+        <div class="results-grid">
+          <div class="result-box highlight">
+            <div class="metric-label" style="color:var(--color-black);">FINAL WPM</div>
+            <div id="modal-result-wpm" class="result-box-num">0</div>
+          </div>
+          <div class="result-box">
+            <div class="metric-label">ACCURACY</div>
+            <div id="modal-result-acc" class="result-box-num">100%</div>
+          </div>
+          <div class="result-box">
+            <div class="metric-label">DURATION</div>
+            <div id="modal-result-time" class="result-box-num">60s</div>
+          </div>
+        </div>
+
+        <div style="border:var(--border-thick); background:var(--color-surface-alt); padding:0.75rem 1rem;">
+          <div class="stat-item">
+            <span class="stat-item-label">Correct Characters Typed:</span>
+            <span id="modal-result-correct" class="stat-item-val" style="color:var(--color-correct)">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-item-label">Mistakes Made:</span>
+            <span id="modal-result-errors" class="stat-item-val" style="color:var(--color-incorrect)">0</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-results-practice" class="btn-secondary">🎯 Drill Weak Keys</button>
+        <button type="button" id="btn-results-analytics" class="btn-sm">📊 View Analytics</button>
+        <button type="button" id="btn-results-retry" class="btn-primary">⚡ Race Again</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Client-Side Modules -->
+  <script src="../js/storage.js"></script>
+  <script src="../js/settings.js"></script>
+  <script src="../js/typing-engine.js"></script>
+  <script src="../js/race-engine.js"></script>
+  <script src="../js/keyboard.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

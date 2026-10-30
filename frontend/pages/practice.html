@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en" data-theme="neo-yellow">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Type.e — Targeted Weak-Key Drills</title>
+  <meta name="description" content="Type.e Practice: Systematic weak-key identification and targeted sentence generation to eliminate mechanical hesitations.">
+
+  <!-- Google Fonts: Space Grotesk, Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800;900&family=Outfit:wght@700;800;900&family=Space+Grotesk:wght@500;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/practice.css">
+</head>
+<body>
+
+  <!-- ======================================================================
+       HEADER
+       ====================================================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="home.html" class="brand-logo" aria-label="Type.e Home">
+        <span class="brand-text">TYPE.<span class="brand-box">E</span></span>
+      </a>
+      <div class="header-divider"></div>
+      <span class="brand-tagline">WEAK-KEY DEXTERITY TRAINING</span>
+    </div>
+
+    <nav class="header-nav" aria-label="Dashboard navigation">
+      <a href="home.html" class="nav-link">HOME</a>
+      <a href="race.html" class="nav-link">RACE TRACK</a>
+      <a href="practice.html" class="nav-link active">PRACTICE</a>
+      <a href="analytics.html" class="nav-link">ANALYTICS</a>
+    </nav>
+
+    <div class="header-tools">
+      <select id="theme-select" class="select-control" aria-label="Select Visual Theme">
+        <option value="neo-yellow">Neo Yellow</option>
+        <option value="dark-arcade">Dark Arcade</option>
+        <option value="light-minimal">Light Minimal</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       MAIN CONTENT: Weak-Key Target Analysis & Targeted Drill Launcher
+       ====================================================================== -->
+  <main class="practice-container">
+
+    <section class="practice-banner-card">
+      <div class="panel-header">
+        <h2 style="font-size:1.15rem;">🎯 TARGETED WEAK-KEY TRAINING</h2>
+        <span class="badge badge-yellow">ALGORITHMIC GENERATOR</span>
+      </div>
+
+      <p style="font-size:0.95rem; font-weight:600; line-height:1.6;">
+        Type.e analyzes every individual keypress to pinpoint exactly where you lose speed and make typos.
+        Targeted drills construct sentences packed with high n-gram density of your specific bottleneck characters.
+      </p>
+
+      <!-- Priority Target Keys Banner -->
+      <div class="weak-key-targets-box">
+        <div>
+          <div style="font-size:0.75rem; font-weight:900; text-transform:uppercase;">CURRENT BOTTLENECK CHARACTERS:</div>
+          <div id="practice-drill-keys" class="target-chips-container" style="margin-top:0.4rem;">
+            <!-- Dynamically populated chips -->
+          </div>
+        </div>
+        <button type="button" id="btn-start-practice-drill" class="btn-primary" style="font-size:1rem; padding:0.75rem 1.4rem;">
+          🚀 Launch Targeted Drill in Arena
+        </button>
+      </div>
+
+      <!-- Training Tips -->
+      <div style="border:var(--border-thick); background:var(--color-surface-alt); padding:1rem 1.25rem;">
+        <h3 style="font-size:0.95rem; margin-bottom:0.5rem;">HOW WEAK-KEY DRILLS WORK</h3>
+        <ul style="padding-left:1.25rem; font-size:0.85rem; font-weight:600; line-height:1.7;">
+          <li>Keys with 3 or more attempts are evaluated for error frequency.</li>
+          <li>Sentences are curated with specialized vocabulary heavy in those specific letters.</li>
+          <li>Practicing these high-density sentences retrains muscle memory to eliminate subconscious finger hesitations.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Client-Side Modules -->
+  <script src="../js/storage.js"></script>
+  <script src="../js/settings.js"></script>
+  <script src="../js/practice.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

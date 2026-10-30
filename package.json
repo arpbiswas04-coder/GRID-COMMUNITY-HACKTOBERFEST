@@ -4,6 +4,9 @@
   "private": true,
   "description": "Typing Speed Trainer - Hack Day Haldia x GRID community starter",
   "scripts": {
-    "start": "npx --yes serve ."
+    "start": "node backend/server.js"
+  },
+  "devDependencies": {
+    "serve": "^14.2.6"
   }
 }

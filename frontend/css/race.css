@@ -1,0 +1,540 @@
+/* ==========================================================================
+   TYPE.E — RACING & TYPING DASHBOARD STYLESHEET (race.css)
+   Compact Neo-Brutalist Arcade Layout
+   ========================================================================== */
+
+.race-container {
+  max-width: 1380px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 2rem;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* --------------------------------------------------------------------------
+   LEFT TELEMETRY SIDEBAR
+   -------------------------------------------------------------------------- */
+.race-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.status-pill {
+  width: 100%;
+  padding: 0.55rem;
+  text-align: center;
+  font-weight: 900;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  letter-spacing: 0.04em;
+}
+.status-pill.status-ready { background: var(--color-primary); }
+.status-pill.status-running { background: var(--color-secondary); color: var(--color-white); }
+.status-pill.status-finished { background: var(--color-correct); color: var(--color-white); }
+
+.sidebar-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.metric-card {
+  border: var(--border-thick);
+  background: var(--color-surface-alt);
+  padding: 0.6rem 0.5rem;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.metric-card.hero-metric {
+  grid-column: span 2;
+  background: var(--color-primary);
+  padding: 0.85rem 0.65rem;
+}
+
+.metric-label {
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-muted);
+}
+.metric-card.hero-metric .metric-label {
+  color: var(--color-black);
+}
+
+.metric-num {
+  font-family: var(--font-mono);
+  font-weight: 950;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  margin-top: 0.15rem;
+}
+.metric-card.hero-metric .metric-num {
+  font-size: 2.8rem;
+  line-height: 0.95;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 2px dashed var(--color-muted-bg);
+  font-size: 0.8rem;
+}
+.stat-item:last-child {
+  border-bottom: none;
+}
+.stat-item-label {
+  font-weight: 800;
+  color: var(--color-black);
+}
+.stat-item-val {
+  font-family: var(--font-mono);
+  font-weight: 900;
+}
+
+/* --------------------------------------------------------------------------
+   MAIN STAGE (TRACK, PASSAGE, KEYBOARD)
+   -------------------------------------------------------------------------- */
+.race-main-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+/* 1. Track Section */
+.track-card {
+  border: var(--border-heavy);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  padding: 0.75rem 1rem 0.85rem;
+}
+
+.track-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.delta-badge {
+  border: var(--border-thick);
+  padding: 0.25rem 0.6rem;
+  font-weight: 900;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.delta-badge.ahead { background: var(--color-correct); color: var(--color-white); }
+.delta-badge.behind { background: var(--color-accent); color: var(--color-white); }
+.delta-badge.neutral { background: var(--color-primary); color: var(--color-black); }
+
+.track-canvas-wrapper {
+  width: 100%;
+  border: var(--border-heavy);
+  background: #191B22;
+  box-shadow: inset 0 0 0 2px #000;
+  position: relative;
+  overflow: hidden;
+}
+
+#racing-canvas {
+  width: 100%;
+  height: 145px;
+  display: block;
+}
+
+.track-telemetry {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.car-telemetry-box {
+  border: var(--border-thick);
+  background: var(--color-surface-alt);
+  padding: 0.4rem 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  font-size: 0.75rem;
+}
+
+.car-badge-pip {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-black);
+}
+.pip-player { background: var(--color-primary); }
+.pip-ghost { background: var(--color-secondary); }
+
+/* 2. Typing Passage Section */
+.passage-card {
+  border: var(--border-heavy);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  padding: 0.75rem 1rem 0.85rem;
+  position: relative;
+}
+
+.passage-display {
+  min-height: 85px;
+  max-height: 110px;
+  overflow-y: auto;
+  border: var(--border-thick);
+  background: var(--color-surface-alt);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  user-select: none;
+  cursor: text;
+  position: relative;
+}
+
+/* Character Highlighting */
+.char {
+  position: relative;
+  transition: background-color 0.04s, color 0.04s;
+}
+
+.char.char-correct {
+  color: var(--color-correct);
+  font-weight: 700;
+  background: var(--color-correct-bg);
+}
+
+.char.char-incorrect {
+  color: var(--color-incorrect);
+  background: var(--color-incorrect-bg);
+  text-decoration: underline wavy var(--color-incorrect);
+  font-weight: 700;
+}
+
+.char.char-space-incorrect {
+  background: var(--color-incorrect);
+  color: var(--color-white);
+  border-bottom: 2px solid var(--color-black);
+}
+
+.char.char-current {
+  background: var(--color-primary);
+  color: var(--color-black);
+  outline: 2px solid var(--color-black);
+  box-shadow: var(--shadow-sm);
+  animation: pulse-caret 1s infinite;
+}
+
+@keyframes pulse-caret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+/* Hidden Single-Source Input Element */
+#typing-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: default;
+  z-index: 10;
+}
+
+.passage-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.passage-progress-track {
+  flex: 1;
+  max-width: 280px;
+  height: 10px;
+  border: var(--border-thin);
+  background: var(--color-surface-alt);
+  box-shadow: var(--shadow-sm);
+  margin: 0 0.75rem;
+  overflow: hidden;
+}
+
+.passage-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--color-primary);
+  transition: width 0.08s linear;
+}
+
+/* --------------------------------------------------------------------------
+   WEAK-KEY SUGGESTIONS BAR (Directly above keyboard)
+   -------------------------------------------------------------------------- */
+.weak-keys-strip {
+  border: var(--border-heavy);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  padding: 0.55rem 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.weak-keys-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.weak-keys-label {
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.weak-chips-list {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.weak-key-badge {
+  border: var(--border-thick);
+  background: var(--hm-critical);
+  color: var(--color-white);
+  padding: 0.15rem 0.5rem;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 0.8rem;
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.weak-key-badge .err-rate {
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------------------------------
+   COLOURFUL VIRTUAL KEYBOARD & HEATMAP
+   -------------------------------------------------------------------------- */
+.keyboard-card {
+  border: var(--border-heavy);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  padding: 0.75rem 1rem 0.85rem;
+}
+
+.kb-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.kb-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--color-black);
+}
+
+.virtual-kb {
+  border: var(--border-thick);
+  background: var(--color-surface-alt);
+  padding: 0.6rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  user-select: none;
+  overflow-x: auto;
+}
+
+.kb-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.kb-key {
+  min-width: 38px;
+  height: 40px;
+  border: 2.5px solid var(--color-black);
+  background: var(--hm-untested);
+  box-shadow: 2px 2px 0px var(--color-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 0.85rem;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.05s, box-shadow 0.05s, background-color 0.1s;
+  padding: 0.15rem;
+}
+
+.kb-key:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--color-black);
+  z-index: 5;
+}
+
+.kb-key.key-pressed {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 0 0 0 transparent !important;
+  background-color: var(--hm-active) !important;
+  color: var(--color-white) !important;
+}
+
+/* Colourful Error Heatmap Classes */
+.kb-key.hm-untested { background-color: var(--hm-untested); color: var(--color-black); }
+.kb-key.hm-excellent { background-color: var(--hm-excellent); color: var(--color-white); }
+.kb-key.hm-low { background-color: var(--hm-low); color: var(--color-black); }
+.kb-key.hm-med { background-color: var(--hm-med); color: var(--color-black); }
+.kb-key.hm-high { background-color: var(--hm-high); color: var(--color-white); }
+.kb-key.hm-critical { background-color: var(--hm-critical); color: var(--color-white); }
+
+/* Key Widths */
+.kb-key.key-wide-1 { flex: 1.25; min-width: 50px; }
+.kb-key.key-wide-2 { flex: 1.5; min-width: 62px; }
+.kb-key.key-wide-3 { flex: 2; min-width: 78px; }
+.kb-key.key-space { flex: 5.5; min-width: 200px; }
+
+/* Key Tooltip */
+.key-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: var(--border-thick);
+  background: var(--color-black);
+  color: var(--color-white);
+  padding: 0.35rem 0.55rem;
+  font-family: var(--font-main);
+  font-size: 0.68rem;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-sm);
+  z-index: 50;
+  display: none;
+  text-align: center;
+}
+
+.kb-key:hover .key-tooltip {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   RESULTS MODAL
+   -------------------------------------------------------------------------- */
+.race-outcome-banner {
+  border: var(--border-heavy);
+  padding: 0.85rem;
+  text-align: center;
+  font-weight: 950;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-md);
+}
+.race-outcome-banner.winner-player { background: var(--color-correct); color: var(--color-white); }
+.race-outcome-banner.winner-ghost { background: var(--color-accent); color: var(--color-white); }
+.race-outcome-banner.winner-solo { background: var(--color-primary); color: var(--color-black); }
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.result-box {
+  border: var(--border-thick);
+  background: var(--color-surface-alt);
+  padding: 0.75rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.result-box.highlight {
+  background: var(--color-primary);
+}
+
+.result-box-num {
+  font-family: var(--font-mono);
+  font-weight: 950;
+  font-size: 2rem;
+  line-height: 1;
+  margin-top: 0.2rem;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVENESS
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .race-container {
+    grid-template-columns: 1fr;
+  }
+  .sidebar-metrics {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .metric-card.hero-metric {
+    grid-column: span 4;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+  .metric-card.hero-metric {
+    grid-column: span 2;
+  }
+  .kb-key {
+    min-width: 26px;
+    height: 34px;
+    font-size: 0.7rem;
+  }
+  .kb-key.key-space {
+    min-width: 120px;
+  }
+}

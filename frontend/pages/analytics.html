@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" data-theme="neo-yellow">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Type.e — Analytics &amp; Personal Bests</title>
+  <meta name="description" content="Type.e Analytics: Speed progression curve, accuracy telemetry, personal records, and downloadable CSV history.">
+
+  <!-- Google Fonts: Space Grotesk, Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800;900&family=Outfit:wght@700;800;900&family=Space+Grotesk:wght@500;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/analytics.css">
+
+  <!-- Chart.js CDN (with native Canvas fallback) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+</head>
+<body>
+
+  <!-- ======================================================================
+       HEADER
+       ====================================================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="home.html" class="brand-logo" aria-label="Type.e Home">
+        <span class="brand-text">TYPE.<span class="brand-box">E</span></span>
+      </a>
+      <div class="header-divider"></div>
+      <span class="brand-tagline">ANALYTICS &amp; SPRINT RECORDS</span>
+    </div>
+
+    <nav class="header-nav" aria-label="Dashboard navigation">
+      <a href="home.html" class="nav-link">HOME</a>
+      <a href="race.html" class="nav-link">RACE TRACK</a>
+      <a href="practice.html" class="nav-link">PRACTICE</a>
+      <a href="analytics.html" class="nav-link active">ANALYTICS</a>
+    </nav>
+
+    <div class="header-tools">
+      <select id="theme-select" class="select-control" aria-label="Select Visual Theme">
+        <option value="neo-yellow">Neo Yellow</option>
+        <option value="dark-arcade">Dark Arcade</option>
+        <option value="light-minimal">Light Minimal</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       MAIN CONTENT: Personal Bests, Progress Chart, Sprint Archives
+       ====================================================================== -->
+  <main class="analytics-container">
+
+    <!-- 1. PERSONAL RECORDS SHOWCASE -->
+    <section aria-label="Personal Records">
+      <div class="panel-header" style="margin-bottom:0.75rem;">
+        <h2 style="font-size:1.15rem;">🏆 PERSONAL RECORDS</h2>
+        <span class="badge badge-yellow">PERSISTENT IN LOCALSTORAGE</span>
+      </div>
+
+      <div class="pb-showcase-grid">
+        <div class="pb-card highlight">
+          <div class="pb-card-title">HIGHEST WPM</div>
+          <div id="pb-highest-wpm" class="pb-card-val">0</div>
+        </div>
+        <div class="pb-card">
+          <div class="pb-card-title">BEST ACCURACY</div>
+          <div id="pb-best-acc" class="pb-card-val">0%</div>
+        </div>
+        <div class="pb-card">
+          <div class="pb-card-title">BEST 30s SPRINT</div>
+          <div id="pb-30s" class="pb-card-val">0</div>
+        </div>
+        <div class="pb-card">
+          <div class="pb-card-title">BEST 60s RUN</div>
+          <div id="pb-60s" class="pb-card-val">0</div>
+        </div>
+        <div class="pb-card">
+          <div class="pb-card-title">BEST 120s ENDURANCE</div>
+          <div id="pb-120s" class="pb-card-val">0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. SPEED PROGRESSION CURVE -->
+    <section class="chart-box" aria-label="Speed Progression Curve">
+      <div class="panel-header">
+        <h2 style="font-size:1.05rem;">📈 WPM PROGRESSION CURVE</h2>
+        <span class="badge badge-dark">HISTORICAL SPRINT TELEMETRY</span>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="performance-chart"></canvas>
+      </div>
+    </section>
+
+    <!-- 3. SPRINT ARCHIVES TABLE -->
+    <section class="archives-table-card" aria-label="Sprint Archives">
+      <div class="panel-header">
+        <h2 style="font-size:1.05rem;">📜 SPRINT ARCHIVES</h2>
+        <div style="display:flex; gap:0.5rem;">
+          <button type="button" id="btn-export-csv" class="btn-sm btn-secondary">💾 Export CSV</button>
+          <button type="button" id="btn-clear-history" class="btn-sm btn-accent">🗑️ Clear Data</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="archives-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Speed</th>
+              <th>Accuracy</th>
+              <th>Duration</th>
+              <th>Difficulty</th>
+              <th>Correct / Mistakes</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body">
+            <!-- Dynamically populated rows -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Client-Side Modules -->
+  <script src="../js/storage.js"></script>
+  <script src="../js/settings.js"></script>
+  <script src="../js/analytics.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

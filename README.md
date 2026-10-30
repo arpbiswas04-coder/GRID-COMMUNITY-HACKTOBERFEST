@@ -1,55 +1,125 @@
-# Typing Speed Trainer
+# TYPE.E — Type Smarter. Improve Faster.
 
-> Measure speed and accuracy, and find the keys that slow you down.
+> **TYPE FAST. DRIVE FASTER.** An arcade-inspired, neo-brutalist typing speed trainer featuring real-time ghost racing, colourful error heatmaps, and weak-key drills.
+> Built for **Hack Day Haldia × GRID Community**.
 
-Hack Day Haldia x GRID community - 6-hour build challenge
+---
 
-**Repo:** `team-zenith` | **Stack:** HTML + vanilla JavaScript | **Difficulty:** Medium-Hard | **Time:** 6 hours
+## 1. Project Overview
 
-## Brief
-Typing tests give one number. Build a trainer that shows exactly where a typist loses time and drills those keys.
+**Type.e** bridges the gap between typing analytics and arcade racing mechanics. Instead of delivering a single arbitrary speed metric at the end of a test, Type.e provides real-time telemetry, visual track visualization against your previous completed typing session, character-by-character visual feedback, colourful per-key error heatmaps, and algorithmic weak-key drills to help typists systematically eradicate mechanical bottlenecks.
 
-## Core tasks (must-do)
-- [ ] Prompts at 3 difficulty levels plus custom text
-- [ ] Live WPM, accuracy and countdown (30 / 60 / 120 s modes)
-- [ ] Highlight correct and wrong characters while typing
-- [ ] Per-key error heatmap drawn on an on-screen keyboard
-- [ ] History of recent tests with a progress line chart
-- [ ] Personal bests saved in localStorage
-- [ ] Practice mode that drills your weakest keys
+---
 
-## Bonus tasks (only after the core works)
-- [ ] Ghost cursor racing your previous best
-- [ ] Themes and sound effects
-- [ ] Alternative keyboard layouts
-- [ ] Export history as CSV
+## 2. Project Architecture & Structure
 
-## What is already here
-- `index.html` - base page
-- `script.js` - state, `save()` / `load()` (localStorage), `render()` and TODO function stubs
-- `package.json` - `npm start` serves this folder
-
-## Run locally
-```bash
-npm start   # or simply open index.html in your browser
+```
+Team-Zenith/
+│
+├── frontend/
+│   ├── index.html                 # Redirect entrypoint to pages/home.html
+│   ├── pages/
+│   │   ├── home.html              # Dedicated landing & configuration page
+│   │   ├── race.html              # Compact telemetry & racing circuit dashboard
+│   │   ├── analytics.html         # Personal records, WPM curve & CSV exports
+│   │   └── practice.html          # Targeted weak-key training drills
+│   │
+│   ├── css/
+│   │   ├── main.css               # Core Neo-Brutalist design system & wordmark
+│   │   ├── home.css               # Hero layout, keyboard illustration & 5 cards
+│   │   ├── race.css               # Compact race dashboard, telemetry & keyboard
+│   │   ├── analytics.css          # Personal bests showcase & progression curve
+│   │   ├── practice.css           # Weak-key target chips & drill launcher
+│   │   └── themes.css             # Neo Yellow, Dark Arcade & Light Minimal
+│   │
+│   ├── js/
+│   │   ├── storage.js             # Centralized LocalStorage data layer
+│   │   ├── settings.js            # Theme switcher & Web Audio synthesizer
+│   │   ├── typing-engine.js       # Single-source-of-truth input engine
+│   │   ├── race-engine.js         # 60 FPS Canvas track & ghost replay
+│   │   ├── keyboard.js            # Colourful error heatmap & layouts
+│   │   ├── analytics.js           # Chart.js progression curve & CSV exporter
+│   │   ├── practice.js            # Algorithmic weak-key sentence generator
+│   │   └── app.js                 # Global lifecycle, routing & configuration
+│   │
+│   └── assets/
+│       ├── images/
+│       ├── icons/
+│       └── sounds/
+│
+├── backend/
+│   └── server.js                  # Lightweight native Node.js static server
+│
+├── package.json
+├── README.md
+└── .gitignore
 ```
 
-## Deploy
-Any static host works (for example GitHub Pages, Netlify or Vercel). There is no build step.
+---
 
-## Suggested pacing
-- Hour 1: read this README, agree on a plan and split the work
-- Hours 2-4: build the core tasks
-- Hour 5: integrate, polish, then bonus tasks if time allows
-- Hour 6: deploy, open the Pull Request, submit on the MLH platform (OrganizerHQ)
+## 3. Key Features
 
-## Submission checklist
-- [ ] All core tasks work end to end
-- [ ] Project is deployed and the live link opens
-- [ ] Pull Request created on the Voyage GitHub repository assigned to your team
-- [ ] Project submitted on the MLH platform (OrganizerHQ) - instructions are shared at the start of the event
+### 🏁 Homepage Configuration (5 Cards in 1 Row)
+1. **Difficulty Level**: Easy (simple sentences), Medium (automotive & technical prose), Hard (complex engineering telemetry), and Custom (paste your own text).
+2. **Set Time**: 30 seconds sprint, 60 seconds standard, and 120 seconds endurance.
+3. **Choice**: Default Curated Prompts or Custom Text (reveals an integrated textarea).
+4. **Layout**: QWERTY, Dvorak, and Colemak.
+5. **Theme**: Neo (Default Yellow/Cream), Dark Arcade (Neon/Dark), Light Minimal (Clean high-contrast).
+- **ENTER THE ARENA**: Big yellow CTA saving selections and immediately launching the race.
 
-## Rules
-- Build new features on top of this starter project and integrate them.
-- Teams of 3-4; every member must be present.
-- AI tools and open-source / open-weight models are fully allowed.
+### 🏎️ Compact Racing Dashboard (`pages/race.html`)
+- **Balanced Two-Column Layout**: Carefully proportioned for 1366×768, 1440×900, and 1536×864 displays without forcing excessive vertical scrolling.
+- **Left Telemetry Sidebar**: Live WPM, accuracy percentage, countdown timer, total strokes attempted, correct characters, and mistakes. (Personal bests panel removed to keep the dashboard focused).
+- **Previous-Session Ghost Racing**:
+  - **First-Ever Session**: Only Player Car (#01) is displayed on track. No ghost car or fake records appear. Upon completion, the session timeline is recorded.
+  - **Second Session Onwards**: The previous completed session is loaded as the Ghost Car (#00). The ghost smoothly replays the prior performance via linear interpolation, while the player car responds to live WPM.
+- **Single-Source Input Engine**: An integrated input source eliminates character skipping and double-input bugs. Rapid typing, Backspace, spaces, and virtual keyboard clicks are processed reliably without state desynchronization.
+- **Weak-Key Suggestions**: Positioned directly above the virtual keyboard showing detected bottleneck keys (e.g. `[H 28%] [C 22%] [P 18%]`) with a quick-drill launch button.
+- **Colourful Keyboard Heatmap**:
+  - Untested: `#E7E2DA`
+  - Excellent (`<3%` errors): `#42C978`
+  - Low errors (`3% - 8%`): `#9BD96C`
+  - Moderate errors (`8% - 15%`): `#FFE66D`
+  - High errors (`15% - 25%`): `#FF9C42`
+  - Very high errors (`>25%`): `#F04444`
+  - Active pressed key: `#42C9F5`
+
+### 📊 Analytics & Records (`pages/analytics.html`)
+- **Personal Records Showcase**: Highest WPM, Best Accuracy, Best 30s, Best 60s, Best 120s, and total characters typed.
+- **WPM Progression Curve**: Chart.js interactive graph showing chronological speed progression (with native Canvas fallback if offline).
+- **Sprint Archives**: Detailed log of past sprints.
+- **CSV Export**: Instant download of test history via standard CSV formatting.
+
+### 🎯 Practice Drills (`pages/practice.html`)
+- Analyzes per-key statistics, extracts top bottleneck keys, and deterministically generates targeted sentences packed with those specific characters.
+
+---
+
+## 4. Technical Stack
+
+- **Frontend**: HTML5, CSS3 (Neo-Brutalist variables & tokens), Vanilla JavaScript (ES2022+ modules).
+- **Graphics**: HTML5 Canvas 2D API (`requestAnimationFrame` continuous 60 FPS animation loop).
+- **Audio**: Web Audio API (`AudioContext`, `OscillatorNode`, `GainNode` for native clicks, buzzes, beeps, and fanfares).
+- **Backend / Dev Server**: Native Node.js built-in modules (`http`, `fs`, `path`, `url`). Zero external dependencies!
+- **Data Persistence**: HTML5 `localStorage` with migration-safe state handling under key `"hackday-haldia-team-zenith"`.
+
+---
+
+## 5. Running Locally
+
+1. Navigate to the repository directory:
+   ```bash
+   cd Team-Zenith
+   ```
+2. Start the local server:
+   ```bash
+   npm start
+   ```
+3. Open your web browser:
+   ```
+   http://localhost:3000
+   ```
+
+---
+
+*Type.e — Team Zenith — Hack Day Haldia × GRID Community*
