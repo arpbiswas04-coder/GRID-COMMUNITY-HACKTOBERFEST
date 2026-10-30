@@ -60,17 +60,28 @@ const server = http.createServer((req, res) => {
 
     fs.readFile(filePath, (readErr, content) => {
       if (readErr) {
-        // Fallback: check inside pages/
-        const alternatePath = path.join(FRONTEND_DIR, "pages", path.basename(filePath));
-        fs.readFile(alternatePath, (altErr, altContent) => {
-          if (altErr) {
-            res.writeHead(404, { "Content-Type": "text/html; charset=UTF-8" });
-            res.end(`<!DOCTYPE html><html><head><title>404 Not Found</title></head><body style="font-family:sans-serif;text-align:center;padding:3rem;"><h1>404 — Page Not Found</h1><p><a href="/pages/home.html">Return to Type.e Home</a></p></body></html>`);
-          } else {
-            const ext = path.extname(alternatePath).toLowerCase();
-            res.writeHead(200, { "Content-Type": MIME_TYPES[ext] || "text/plain" });
-            res.end(altContent);
+        // Fallback 1: check project root directory
+        const rootPath = path.join(__dirname, "..", safePath);
+        fs.readFile(rootPath, (rootErr, rootContent) => {
+          if (!rootErr) {
+            const ext = path.extname(rootPath).toLowerCase();
+            res.writeHead(200, { "Content-Type": MIME_TYPES[ext] || "application/octet-stream" });
+            res.end(rootContent);
+            return;
           }
+
+          // Fallback 2: check inside pages/
+          const alternatePath = path.join(FRONTEND_DIR, "pages", path.basename(filePath));
+          fs.readFile(alternatePath, (altErr, altContent) => {
+            if (altErr) {
+              res.writeHead(404, { "Content-Type": "text/html; charset=UTF-8" });
+              res.end(`<!DOCTYPE html><html><head><title>404 Not Found</title></head><body style="font-family:sans-serif;text-align:center;padding:3rem;"><h1>404 — Page Not Found</h1><p><a href="/pages/home.html">Return to Type.e Home</a></p></body></html>`);
+            } else {
+              const ext = path.extname(alternatePath).toLowerCase();
+              res.writeHead(200, { "Content-Type": MIME_TYPES[ext] || "text/plain" });
+              res.end(altContent);
+            }
+          });
         });
         return;
       }

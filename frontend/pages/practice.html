@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Type.e — Targeted Weak-Key Drills</title>
-  <meta name="description" content="Type.e Practice: Systematic weak-key identification and targeted sentence generation to eliminate mechanical hesitations.">
+  <title>Type.e — Targeted Practice Arena</title>
+  <meta name="description" content="Type.e Dedicated Practice: Systematic weak-key eradication, common n-gram combinations, and dexterity exercises.">
 
   <!-- Google Fonts: Space Grotesk, Outfit & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,6 +22,7 @@
        ====================================================================== -->
   <header class="app-header">
     <div class="header-left">
+      <button type="button" id="btn-header-back" class="btn-header-back" aria-label="Go Back"><span class="back-arrow">←</span> BACK</button>
       <a href="home.html" class="brand-logo" aria-label="Type.e Home">
         <span class="brand-text">TYPE.<span class="brand-box">E</span></span>
       </a>
@@ -44,46 +45,174 @@
   </header>
 
   <!-- ======================================================================
-       MAIN CONTENT: Weak-Key Target Analysis & Targeted Drill Launcher
+       MAIN CONTENT: Dedicated Standalone Practice Experience
        ====================================================================== -->
   <main class="practice-container">
 
-    <section class="practice-banner-card">
+    <!-- 1. WEAK-KEY ANALYSIS & DIAGNOSTICS -->
+    <section class="practice-banner-card" aria-label="Weak Key Analysis">
       <div class="panel-header">
-        <h2 style="font-size:1.15rem;">🎯 TARGETED WEAK-KEY TRAINING</h2>
-        <span class="badge badge-yellow">ALGORITHMIC GENERATOR</span>
+        <h2 style="font-size:1.15rem;">🎯 WEAK-KEY ANALYSIS &amp; DIAGNOSTICS</h2>
+        <span class="badge badge-yellow">TELEMETRY SCANNER</span>
       </div>
 
-      <p style="font-size:0.95rem; font-weight:600; line-height:1.6;">
-        Type.e analyzes every individual keypress to pinpoint exactly where you lose speed and make typos.
-        Targeted drills construct sentences packed with high n-gram density of your specific bottleneck characters.
+      <p style="font-size:0.92rem; font-weight:600; line-height:1.6; color:var(--color-black);">
+        Type.e analyzes individual keystrokes from your circuit sprints to isolate mechanical hesitations and error-prone keys.
+        Below are your highest-error bottleneck characters:
       </p>
 
-      <!-- Priority Target Keys Banner -->
+      <!-- Target Keys Container -->
       <div class="weak-key-targets-box">
-        <div>
-          <div style="font-size:0.75rem; font-weight:900; text-transform:uppercase;">CURRENT BOTTLENECK CHARACTERS:</div>
-          <div id="practice-drill-keys" class="target-chips-container" style="margin-top:0.4rem;">
+        <div style="flex:1;">
+          <div style="font-size:0.75rem; font-weight:900; text-transform:uppercase; letter-spacing:0.04em;">DETECTED BOTTLENECK KEYS:</div>
+          <div id="practice-drill-keys" class="target-chips-container" style="margin-top:0.45rem;">
             <!-- Dynamically populated chips -->
           </div>
         </div>
-        <button type="button" id="btn-start-practice-drill" class="btn-primary" style="font-size:1rem; padding:0.75rem 1.4rem;">
-          🚀 Launch Targeted Drill in Arena
+        <div class="analysis-tip-pill" id="analysis-tip-pill">
+          ⚡ SPRINT DATA ANALYZED
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. PRACTICE CONFIGURATION: FOCUS MODES -->
+    <section class="practice-config-card" aria-label="Practice Focus Configuration">
+      <div class="panel-header">
+        <h2 style="font-size:1.05rem;">⚙️ PRACTICE FOCUS</h2>
+        <span class="badge badge-dark">SELECT DRILL TYPE</span>
+      </div>
+
+      <div class="focus-selector-grid">
+        <button type="button" class="focus-btn active" data-focus="weak">
+          <span class="focus-btn-icon">🎯</span>
+          <span class="focus-btn-title">Weakest Keys</span>
+          <span class="focus-btn-desc">High-density sentences exercising your top error keys</span>
+        </button>
+
+        <button type="button" class="focus-btn" data-focus="combos">
+          <span class="focus-btn-icon">⚡</span>
+          <span class="focus-btn-title">Common Combos</span>
+          <span class="focus-btn-desc">Frequent n-grams (-tion, -ing, th-, ough, qu-)</span>
+        </button>
+
+        <button type="button" class="focus-btn" data-focus="difficult">
+          <span class="focus-btn-icon">🧩</span>
+          <span class="focus-btn-title">Difficult Words</span>
+          <span class="focus-btn-desc">Complex finger gymnastics &amp; awkward transitions</span>
+        </button>
+
+        <button type="button" class="focus-btn" data-focus="general">
+          <span class="focus-btn-icon">📖</span>
+          <span class="focus-btn-title">General Dexterity</span>
+          <span class="focus-btn-desc">Balanced, natural sentences for smooth rhythm</span>
         </button>
       </div>
 
-      <!-- Training Tips -->
-      <div style="border:var(--border-thick); background:var(--color-surface-alt); padding:1rem 1.25rem;">
-        <h3 style="font-size:0.95rem; margin-bottom:0.5rem;">HOW WEAK-KEY DRILLS WORK</h3>
-        <ul style="padding-left:1.25rem; font-size:0.85rem; font-weight:600; line-height:1.7;">
-          <li>Keys with 3 or more attempts are evaluated for error frequency.</li>
-          <li>Sentences are curated with specialized vocabulary heavy in those specific letters.</li>
-          <li>Practicing these high-density sentences retrains muscle memory to eliminate subconscious finger hesitations.</li>
-        </ul>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+        <span id="active-focus-label" style="font-size:0.82rem; font-weight:850; text-transform:uppercase;">CURRENT FOCUS: WEAKEST KEYS</span>
+        <button type="button" id="btn-gen-exercise" class="btn-sm btn-secondary">
+          🔄 Generate Another Exercise
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. DEDICATED PRACTICE TYPING STAGE -->
+    <section class="practice-stage-card" aria-label="Typing Practice Area">
+      <div class="panel-header">
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <h2 style="font-size:1.05rem;">⌨️ PRACTICE ARENA</h2>
+          <span id="practice-status-badge" class="badge badge-yellow">READY TO TYPE</span>
+        </div>
+        <div class="stage-tools">
+          <button type="button" id="btn-practice-restart" class="btn-sm">🔄 Restart</button>
+          <button type="button" id="btn-practice-next" class="btn-sm btn-primary">⏭️ Next Drill</button>
+        </div>
+      </div>
+
+      <!-- Passage Display -->
+      <div class="practice-passage-wrapper">
+        <div id="practice-passage-display" class="practice-passage-display" tabindex="0" role="textbox" aria-readonly="true">
+          <!-- Dynamically populated character spans -->
+        </div>
+        <!-- Single Source Hidden Input -->
+        <input type="text" id="practice-typing-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Practice text typing input" />
+      </div>
+
+      <!-- Progress Track -->
+      <div class="passage-footer-row">
+        <span>EXERCISE PROGRESS</span>
+        <div class="passage-progress-track">
+          <div id="practice-progress-fill" class="passage-progress-bar"></div>
+        </div>
+        <span id="practice-progress-text">0% (0/0)</span>
+      </div>
+
+      <!-- Live Telemetry HUD -->
+      <div class="practice-hud-grid">
+        <div class="practice-hud-card highlight">
+          <div class="metric-label" style="color:var(--color-black);">LIVE WPM</div>
+          <div id="practice-live-wpm" class="practice-hud-val">0</div>
+        </div>
+        <div class="practice-hud-card">
+          <div class="metric-label">ACCURACY</div>
+          <div id="practice-live-acc" class="practice-hud-val">100%</div>
+        </div>
+        <div class="practice-hud-card">
+          <div class="metric-label">CORRECT CHARS</div>
+          <div id="practice-live-chars" class="practice-hud-val" style="color:var(--color-correct);">0</div>
+        </div>
+        <div class="practice-hud-card">
+          <div class="metric-label">MISTAKES</div>
+          <div id="practice-live-errors" class="practice-hud-val" style="color:var(--color-incorrect);">0</div>
+        </div>
       </div>
     </section>
 
   </main>
+
+  <!-- ======================================================================
+       PRACTICE RESULTS MODAL
+       ====================================================================== -->
+  <div id="modal-practice-results" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2>🎯 DRILL COMPLETE!</h2>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="practice-result-banner" class="race-outcome-banner winner-player">
+          🌟 DRILL FINISHED!
+        </div>
+
+        <div class="results-grid">
+          <div class="result-box highlight">
+            <div class="metric-label" style="color:var(--color-black);">SPEED</div>
+            <div id="practice-res-wpm" class="result-box-num">0 WPM</div>
+          </div>
+          <div class="result-box">
+            <div class="metric-label">ACCURACY</div>
+            <div id="practice-res-acc" class="result-box-num">100%</div>
+          </div>
+          <div class="result-box">
+            <div class="metric-label">TIME</div>
+            <div id="practice-res-time" class="result-box-num">0s</div>
+          </div>
+        </div>
+
+        <!-- Feedback & Improvement Suggestion -->
+        <div class="practice-feedback-card">
+          <div style="font-weight:900; font-size:0.82rem; text-transform:uppercase; margin-bottom:0.35rem;">💡 COACH ADVICE:</div>
+          <p id="practice-feedback-text" style="font-size:0.88rem; font-weight:600; line-height:1.5; color:var(--color-black);">
+            Keep practicing to develop rhythmic cadence.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-practice-again" class="btn-secondary">🔄 Try Another Drill</button>
+        <button type="button" id="btn-practice-race" class="btn-primary">🏎️ Test on Circuit</button>
+      </div>
+    </div>
+  </div>
 
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
@@ -94,3 +223,4 @@
   <script src="../js/app.js"></script>
 </body>
 </html>
+

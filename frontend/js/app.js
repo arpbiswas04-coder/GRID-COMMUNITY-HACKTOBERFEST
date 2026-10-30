@@ -25,7 +25,28 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   });
 
-  // 4. Page Routing & Initialization
+  // 4. In-Website Back Button
+  const backBtn = document.querySelector("#btn-header-back");
+  if (backBtn) {
+    const isHome = window.location.pathname.toLowerCase().includes("home") || 
+                   window.location.pathname.endsWith("/") || 
+                   window.location.pathname.endsWith("index.html");
+    if (isHome) {
+      backBtn.style.display = "none";
+    } else {
+      backBtn.onclick = (e) => {
+        e.preventDefault();
+        const hasAppReferrer = document.referrer && document.referrer.includes(window.location.host);
+        if (hasAppReferrer && window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = "home.html";
+        }
+      };
+    }
+  }
+
+  // 5. Page Routing & Initialization
   const pathname = window.location.pathname.toLowerCase();
 
   if (pathname.includes("home") || pathname.endsWith("/") || pathname.endsWith("index.html") || document.querySelector("#btn-enter-arena")) {

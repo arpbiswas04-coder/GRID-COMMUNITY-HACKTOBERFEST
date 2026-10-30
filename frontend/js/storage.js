@@ -6,14 +6,19 @@
 const STORAGE_KEY = "hackday-haldia-team-zenith";
 
 const DEFAULT_STATE = {
-  version: "4.0.0",
+  version: "4.1.0",
   soundEnabled: false,        // Default disabled
   keyboardLayout: "qwerty",   // 'qwerty' | 'dvorak' | 'colemak'
   difficulty: "medium",       // 'easy' | 'medium' | 'hard' | 'custom'
   duration: 60,               // 30 | 60 | 120
   promptChoice: "default",    // 'default' | 'custom' (independent of difficulty)
   customPassage: "",
-  bestGhostRace: null,        // { timeline: [{time, progress, wpm}], wpm: N, duration: D, accuracy: A, date: "..." }
+  bestGhostRace: null,        // Overall personal best ghost
+  ghostRecords: {             // Independent ghost PB timelines by race duration
+    "30": null,
+    "60": null,
+    "120": null
+  },
   personalBests: {
     highestWPM: 0,
     bestAccuracy: 0,
@@ -25,7 +30,7 @@ const DEFAULT_STATE = {
   },
   keyStatistics: {},          // { 'a': { attempts: N, errors: E }, ... }
   testHistory: [],            // Completed sprint records
-  practiceHistory: []
+  practiceHistory: []         // Dedicated practice session records
 };
 
 let appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -40,24 +45,38 @@ function loadState() {
       appState.keyStatistics = parsed.keyStatistics || {};
       appState.testHistory = Array.isArray(parsed.testHistory) ? parsed.testHistory : [];
       appState.practiceHistory = Array.isArray(parsed.practiceHistory) ? parsed.practiceHistory : [];
+      appState.ghostRecords = parsed.ghostRecords || { "30": null, "60": null, "120": null };
 
-      // Migration: restore ghost race from bestGhostRace, previousSessionRace, or legacy timelines
+      // Migration: migrate legacy bestGhostRace or previousSessionRace into duration-specific ghostRecords
       if (parsed.bestGhostRace && parsed.bestGhostRace.timeline && parsed.bestGhostRace.timeline.length > 0) {
         appState.bestGhostRace = parsed.bestGhostRace;
+        const dur = String(parsed.bestGhostRace.duration || 60);
+        if (!appState.ghostRecords[dur]) {
+          appState.ghostRecords[dur] = parsed.bestGhostRace;
+        }
       } else if (parsed.previousSessionRace && parsed.previousSessionRace.timeline && parsed.previousSessionRace.timeline.length > 0) {
         appState.bestGhostRace = parsed.previousSessionRace;
+        const dur = String(parsed.previousSessionRace.duration || 60);
+        if (!appState.ghostRecords[dur]) {
+          appState.ghostRecords[dur] = parsed.previousSessionRace;
+        }
       } else if (parsed.bestRaceTimelines) {
-        const legacy = parsed.bestRaceTimelines["60"] || parsed.bestRaceTimelines["30"] || parsed.bestRaceTimelines["120"];
-        if (legacy && legacy.timeline) {
-          appState.bestGhostRace = {
-            timeline: legacy.timeline,
-            wpm: legacy.wpm || 0,
-            duration: legacy.duration || 60,
-            accuracy: legacy.accuracy || 100,
-            date: legacy.date || new Date().toISOString()
-          };
+        ["30", "60", "120"].forEach(d => {
+          if (parsed.bestRaceTimelines[d] && parsed.bestRaceTimelines[d].timeline) {
+            appState.ghostRecords[d] = parsed.bestRaceTimelines[d];
+          }
+        });
+        if (!appState.bestGhostRace && appState.ghostRecords["60"]) {
+          appState.bestGhostRace = appState.ghostRecords["60"];
         }
       }
+
+      // Ensure ghostRecords object has all keys
+      ["30", "60", "120"].forEach(d => {
+        if (appState.ghostRecords[d] === undefined) {
+          appState.ghostRecords[d] = null;
+        }
+      });
     } else {
       appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
     }
@@ -86,10 +105,51 @@ function updateState(updates) {
   return appState;
 }
 
+function getGhostForDuration(duration) {
+  const d = String(duration || 60);
+  if (appState.ghostRecords && appState.ghostRecords[d]) {
+    return appState.ghostRecords[d];
+  }
+  if (appState.bestGhostRace && String(appState.bestGhostRace.duration) === d) {
+    return appState.bestGhostRace;
+  }
+  return null;
+}
+
+function saveGhostForDuration(duration, ghostData) {
+  const d = String(duration || 60);
+  if (!appState.ghostRecords) {
+    appState.ghostRecords = { "30": null, "60": null, "120": null };
+  }
+  appState.ghostRecords[d] = ghostData;
+
+  // Also update overall bestGhostRace if this run is faster or if none exists
+  if (!appState.bestGhostRace || (ghostData.wpm && ghostData.wpm >= (appState.bestGhostRace.wpm || 0))) {
+    appState.bestGhostRace = ghostData;
+  }
+
+  saveState();
+}
+
+function savePracticeRecord(record) {
+  if (!Array.isArray(appState.practiceHistory)) {
+    appState.practiceHistory = [];
+  }
+  appState.practiceHistory.unshift(record);
+  if (appState.practiceHistory.length > 50) {
+    appState.practiceHistory.pop();
+  }
+  saveState();
+}
+
 // Global accessor
 window.TypeEStorage = {
   get: getState,
   load: loadState,
   save: saveState,
-  update: updateState
+  update: updateState,
+  getGhostForDuration,
+  saveGhostForDuration,
+  savePracticeRecord
 };
+

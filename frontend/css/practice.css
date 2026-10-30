@@ -1,38 +1,40 @@
 /* ==========================================================================
    TYPE.E — PRACTICE DRILLS STYLESHEET (practice.css)
-   Targeted Weak-Key Training & Improvement Tracking
+   Targeted Weak-Key Training & Independent Practice Arena
    ========================================================================== */
 
 .practice-container {
-  max-width: 1100px;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.practice-banner-card {
-  border: var(--border-heavy);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-xl);
-  padding: 1.5rem;
+  padding: 1.25rem 1.25rem 3rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
+.practice-banner-card,
+.practice-config-card,
+.practice-stage-card {
+  border: var(--border-heavy);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xl);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .weak-key-targets-box {
   border: var(--border-thick);
-  background: var(--color-primary);
-  padding: 1rem 1.25rem;
-  box-shadow: var(--shadow-md);
+  background: var(--color-surface-alt);
+  padding: 0.85rem 1.15rem;
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
 .target-chips-container {
@@ -46,63 +48,180 @@
   border: var(--border-thick);
   background: var(--hm-critical);
   color: var(--color-white);
-  padding: 0.25rem 0.65rem;
+  padding: 0.3rem 0.75rem;
   font-family: var(--font-mono);
   font-weight: 900;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   box-shadow: var(--shadow-sm);
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: transform var(--trans-fast);
 }
 
-.practice-drill-runner {
-  border: var(--border-heavy);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-lg);
-  padding: 1.5rem;
+.practice-chip:hover {
+  transform: translate(-1px, -1px);
+}
+
+.practice-chip span {
+  font-size: 0.72rem;
+  opacity: 0.9;
+  background: rgba(0,0,0,0.3);
+  padding: 0.1rem 0.35rem;
+}
+
+.analysis-tip-pill {
+  border: var(--border-thick);
+  background: var(--color-primary);
+  font-weight: 900;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 2. Focus Selector Grid */
+.focus-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+}
+
+.focus-btn {
+  border: var(--border-thick);
+  background: var(--color-surface-alt);
+  padding: 0.85rem 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 1.15rem;
+  align-items: flex-start;
+  gap: 0.3rem;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--trans-fast), background-color var(--trans-fast);
 }
 
-.drill-passage-box {
-  min-height: 100px;
-  border: var(--border-thick);
+.focus-btn:hover {
+  transform: translate(-2px, -2px);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+}
+
+.focus-btn.active {
+  background: var(--color-primary) !important;
+  border-color: var(--color-black);
+  box-shadow: var(--shadow-md);
+}
+
+.focus-btn-icon {
+  font-size: 1.35rem;
+}
+
+.focus-btn-title {
+  font-weight: 950;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+}
+
+.focus-btn-desc {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-muted);
+  line-height: 1.35;
+}
+
+.focus-btn.active .focus-btn-desc {
+  color: var(--color-black);
+}
+
+/* 3. Typing Stage */
+.stage-tools {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.practice-passage-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.practice-passage-display {
+  min-height: 120px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: var(--border-heavy);
   background: var(--color-surface-alt);
   padding: 1rem 1.25rem;
   font-family: var(--font-mono);
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   line-height: 1.7;
+  letter-spacing: 0.02em;
+  word-break: break-word;
+  white-space: pre-wrap;
+  user-select: none;
+  cursor: text;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  scroll-behavior: smooth;
 }
 
-.drill-stats-row {
+#practice-typing-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: default;
+  z-index: 10;
+}
+
+/* Practice HUD */
+.practice-hud-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
 }
 
-.drill-stat-box {
+.practice-hud-card {
   border: var(--border-thick);
   background: var(--color-surface-alt);
-  padding: 0.85rem;
+  padding: 0.65rem 0.5rem;
   text-align: center;
   box-shadow: var(--shadow-sm);
 }
 
-.drill-stat-box.highlight {
+.practice-hud-card.highlight {
   background: var(--color-primary);
 }
 
-.improvement-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1rem;
+.practice-hud-val {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 950;
+  line-height: 1.1;
+  margin-top: 0.15rem;
+}
+
+/* Practice Feedback Card in Modal */
+.practice-feedback-card {
   border: var(--border-thick);
-  background: var(--color-correct);
-  color: var(--color-white);
-  font-weight: 900;
-  font-size: 0.9rem;
+  background: var(--color-surface-alt);
+  padding: 0.85rem 1rem;
   box-shadow: var(--shadow-sm);
 }
+
+@media (max-width: 900px) {
+  .focus-selector-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .practice-hud-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .focus-selector-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

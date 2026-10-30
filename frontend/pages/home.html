@@ -22,6 +22,7 @@
        ====================================================================== -->
   <header class="app-header">
     <div class="header-left">
+      <button type="button" id="btn-header-back" class="btn-header-back" aria-label="Go Back"><span class="back-arrow">←</span> BACK</button>
       <a href="home.html" class="brand-logo" aria-label="Type.e Home">
         <span class="brand-text">TYPE.<span class="brand-box">E</span></span>
       </a>
@@ -39,78 +40,15 @@
   </header>
 
   <!-- ======================================================================
-       MAIN CONTENT: Hero, 5 Configuration Cards, Enter Arena CTA
+       MAIN CONTENT: Neo-Brutalist Stage with home-background.jpeg Artwork
        ====================================================================== -->
   <main class="home-container">
 
-    <!-- HERO SECTION -->
-    <section class="home-hero" aria-label="Type.e Introduction">
-      <div class="hero-left">
-        <h1 class="hero-headline">
-          TURN YOUR<br>
-          TYPING INTO<br>
-          <span class="hero-highlight">PROGRESS</span>
-        </h1>
-        <p class="hero-subtitle">
-          <span>Measure</span>
-          <span class="dot"></span>
-          <span>Locate</span>
-          <span class="dot"></span>
-          <span>Improve</span>
-        </p>
-      </div>
+    <div class="home-stage-wrapper">
+      <div class="home-hero-stage" role="region" aria-label="Type.e Arena Configuration">
 
-      <!-- Mechanical Keyboard Illustration -->
-      <div class="hero-right">
-        <div class="keyboard-illustration">
-          <div class="kb-ill-cable"></div>
-          <div class="kb-ill-header">
-            <span class="badge badge-dark">TYPE.E PRO MK-1</span>
-            <span class="badge badge-yellow">TACTILE</span>
-          </div>
-          <div class="kb-ill-grid">
-            <div class="ill-row">
-              <div class="ill-key key-red">ESC</div>
-              <div class="ill-key">Q</div>
-              <div class="ill-key key-yellow">W</div>
-              <div class="ill-key">E</div>
-              <div class="ill-key key-blue">R</div>
-              <div class="ill-key">T</div>
-              <div class="ill-key">Y</div>
-              <div class="ill-key key-wide">DEL</div>
-            </div>
-            <div class="ill-row">
-              <div class="ill-key key-wide">TAB</div>
-              <div class="ill-key key-green">A</div>
-              <div class="ill-key">S</div>
-              <div class="ill-key key-yellow">D</div>
-              <div class="ill-key">F</div>
-              <div class="ill-key">G</div>
-              <div class="ill-key key-blue">H</div>
-              <div class="ill-key key-wide">RET</div>
-            </div>
-            <div class="ill-row">
-              <div class="ill-key key-wide">SHIFT</div>
-              <div class="ill-key">Z</div>
-              <div class="ill-key">X</div>
-              <div class="ill-key key-red">C</div>
-              <div class="ill-key">V</div>
-              <div class="ill-key key-yellow">B</div>
-              <div class="ill-key">N</div>
-              <div class="ill-key key-wide">SHIFT</div>
-            </div>
-            <div class="ill-row">
-              <div class="ill-key">CTRL</div>
-              <div class="ill-key">ALT</div>
-              <div class="ill-key key-spacebar">TYPE.E</div>
-              <div class="ill-key">ALT</div>
-              <div class="ill-key">FN</div>
-            </div>
-          </div>
-          <span class="deco-star">✦</span>
-        </div>
-      </div>
-    </section>
+        <!-- Open viewing spacer for headline and mechanical keyboard in home-background.jpeg -->
+        <div class="hero-artwork-spacer" aria-hidden="true"></div>
 
     <!-- CONFIGURATION SECTION: FIVE EQUALLY BALANCED CARDS IN ONE ROW -->
     <section class="config-section" aria-label="Game Configuration">
@@ -248,6 +186,9 @@
         TYPE &bull; TRACK &bull; IMPROVE
       </div>
     </div>
+
+      </div> <!-- .home-hero-stage -->
+    </div> <!-- .home-stage-wrapper -->
 
   </main>
 

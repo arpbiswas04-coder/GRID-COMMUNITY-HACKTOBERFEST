@@ -43,17 +43,20 @@ class RaceEngine {
 
   loadGhostSession() {
     const state = window.TypeEStorage.get();
-    const ghostRecord = state.bestGhostRace;
+    const duration = state.duration || 60;
+    const ghostRecord = window.TypeEStorage.getGhostForDuration(duration);
 
     if (ghostRecord && ghostRecord.timeline && ghostRecord.timeline.length > 0) {
       this.hasGhost = true;
       this.ghostTimeline = ghostRecord.timeline;
       this.ghostWPM = ghostRecord.wpm || 0;
+      this.ghostDuration = ghostRecord.duration || duration;
       if (this.ghostCarEl) this.ghostCarEl.style.display = "block";
     } else {
       this.hasGhost = false;
       this.ghostTimeline = null;
       this.ghostWPM = 0;
+      this.ghostDuration = duration;
       if (this.ghostCarEl) this.ghostCarEl.style.display = "none";
     }
 
@@ -219,42 +222,69 @@ class RaceEngine {
 
   onRaceComplete(timeline, finalWPM, accuracy, correctChars, incorrectChars, elapsedSec) {
     const state = window.TypeEStorage.get();
+    const duration = state.duration || 60;
+    const ghostRecord = window.TypeEStorage.getGhostForDuration(duration);
 
-    let playerWon = true;
-    let message = "Circuit Sprint Complete!";
-    let outcomeClass = "winner-player";
+    let playerWon = false;
+    let message = "";
+    let outcomeClass = "";
 
-    if (!this.hasGhost) {
-      message = "Initial Circuit Record Established!";
+    // A. FIRST-EVER RACE (No previous ghost for this duration)
+    if (!this.hasGhost || !ghostRecord) {
+      playerWon = true; // Recorded as a successful benchmark run
+      message = "🏁 FIRST SPRINT COMPLETE — GHOST RECORD ESTABLISHED!";
       outcomeClass = "winner-solo";
-      // Save initial personal best ghost
-      state.bestGhostRace = {
+
+      // Save initial personal best ghost for this duration
+      window.TypeEStorage.saveGhostForDuration(duration, {
         timeline: timeline,
         wpm: finalWPM,
-        duration: state.duration || 60,
+        duration: duration,
         accuracy: accuracy,
+        progress: this.playerProgress,
         date: new Date().toISOString()
-      };
+      });
     } else {
-      if (this.playerProgress >= this.ghostProgress || finalWPM >= this.ghostWPM) {
+      // Comparison logic: Compare track progress and time outcomes consistently
+      const progressDiff = this.playerProgress - this.ghostProgress;
+      const bothCompleted = (this.playerProgress >= 0.999 && this.ghostProgress >= 0.999);
+
+      // D. TIE CONDITION: Essentially identical progress (<= 0.5%) and WPM within 1
+      const isTie = Math.abs(progressDiff) <= 0.005 && Math.abs(finalWPM - this.ghostWPM) <= 1;
+
+      if (isTie) {
+        playerWon = false;
+        message = "🏁 DEAD HEAT! A GENUINE TIE ON THE CIRCUIT!";
+        outcomeClass = "winner-tie";
+      } else if (progressDiff > 0.008 || (bothCompleted && finalWPM > this.ghostWPM)) {
+        // B. PLAYER BEATS THE GHOST: Player genuinely finished ahead on the circuit
         playerWon = true;
         outcomeClass = "winner-player";
-        if (finalWPM > this.ghostWPM && accuracy >= 80) {
-          message = "NEW PERSONAL RECORD! YOU DEFEATED THE GHOST!";
-          // Update personal best ghost
-          state.bestGhostRace = {
+
+        // Check if player established a genuine new Personal Best for this duration
+        const isNewPB = (finalWPM > (ghostRecord.wpm || 0)) && (accuracy >= 80);
+
+        if (isNewPB) {
+          message = "🏆 NEW PERSONAL BEST! YOU OUTPACED YOUR GHOST!";
+          outcomeClass = "winner-pb";
+
+          // Save new PB timeline only when actual personal-best criteria are met
+          window.TypeEStorage.saveGhostForDuration(duration, {
             timeline: timeline,
             wpm: finalWPM,
-            duration: state.duration || 60,
+            duration: duration,
             accuracy: accuracy,
+            progress: this.playerProgress,
             date: new Date().toISOString()
-          };
+          });
         } else {
-          message = "VICTORY! YOU CAME OUT AHEAD ON THE CIRCUIT!";
+          message = "⚡ VICTORY! YOU FINISHED AHEAD ON THE CIRCUIT!";
         }
       } else {
+        // C. PLAYER LOSES TO THE GHOST: Ghost finished ahead on track
+        // Never declare victory simply because WPM is higher when player is behind
         playerWon = false;
-        message = "GHOST HELD THE LEAD! KEEP TRAINING TO BEAT YOUR PB!";
+        message = "⚠️ GHOST HELD THE LEAD! KEEP TRAINING TO BEAT YOUR PB!";
         outcomeClass = "winner-ghost";
       }
     }
