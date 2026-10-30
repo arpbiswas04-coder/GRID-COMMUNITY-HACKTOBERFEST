@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="neo-yellow">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,7 +13,6 @@
 
   <!-- Core & Page Stylesheets -->
   <link rel="stylesheet" href="../css/main.css">
-  <link rel="stylesheet" href="../css/themes.css">
   <link rel="stylesheet" href="../css/home.css">
 </head>
 <body>
@@ -30,7 +29,7 @@
       <span class="brand-tagline">TYPE SMARTER. IMPROVE FASTER.</span>
     </div>
 
-    <!-- Right Navigation Bar -->
+    <!-- Navigation Bar -->
     <nav class="header-nav" aria-label="Primary navigation">
       <a href="home.html" class="nav-link active">HOME</a>
       <a href="race.html" class="nav-link">RACE</a>
@@ -113,7 +112,7 @@
       </div>
     </section>
 
-    <!-- CONFIGURATION SECTION: 5 EQUAL CARDS IN ONE ROW -->
+    <!-- CONFIGURATION SECTION: FIVE EQUALLY BALANCED CARDS IN ONE ROW -->
     <section class="config-section" aria-label="Game Configuration">
       <div class="config-grid">
 
@@ -156,7 +155,7 @@
             </button>
             <button type="button" class="config-btn opt-time active" data-val="60">
               <span>60 seconds</span>
-              <span class="config-btn-sub">Standard race duration</span>
+              <span class="config-btn-sub">Standard circuit race</span>
             </button>
             <button type="button" class="config-btn opt-time" data-val="120">
               <span>120 seconds</span>
@@ -174,25 +173,25 @@
           <div class="config-options">
             <button type="button" class="config-btn opt-choice active" data-val="default">
               <span>Default Prompts</span>
-              <span class="config-btn-sub">Curated racing passages</span>
+              <span class="config-btn-sub">Authentic curated passages</span>
             </button>
             <button type="button" class="config-btn opt-choice" data-val="custom">
               <span>Custom Text</span>
               <span class="config-btn-sub">Paste custom training text</span>
             </button>
 
-            <!-- Custom text input displayed when Custom is chosen -->
+            <!-- Custom text input displayed strictly when Custom Text is active -->
             <div id="custom-text-wrapper" class="custom-text-wrapper" style="display: none;">
               <textarea id="custom-text-input" class="custom-text-box" placeholder="Paste your passage here (min 15 chars)..."></textarea>
             </div>
           </div>
         </div>
 
-        <!-- CARD 4: LAYOUT -->
+        <!-- CARD 4: KEYBOARD LAYOUT -->
         <div class="config-card">
           <div class="config-card-header">
             <span class="config-card-icon">⌨️</span>
-            <h2 class="config-card-title">LAYOUT</h2>
+            <h2 class="config-card-title">KEYBOARD LAYOUT</h2>
           </div>
           <div class="config-options">
             <button type="button" class="config-btn opt-layout active" data-val="qwerty">
@@ -200,35 +199,30 @@
               <span class="config-btn-sub">Universal standard</span>
             </button>
             <button type="button" class="config-btn opt-layout" data-val="dvorak">
-              <span>Dvorak</span>
+              <span>DVORAK</span>
               <span class="config-btn-sub">Ergonomic keyflow</span>
             </button>
             <button type="button" class="config-btn opt-layout" data-val="colemak">
-              <span>Colemak</span>
+              <span>COLEMAK</span>
               <span class="config-btn-sub">Modern touch-typing</span>
             </button>
           </div>
         </div>
 
-        <!-- CARD 5: THEME -->
+        <!-- CARD 5: VISUAL STYLE (Locked to Single Unified Neo-Brutalist Theme) -->
         <div class="config-card">
           <div class="config-card-header">
-            <span class="config-card-icon">🎨</span>
-            <h2 class="config-card-title">THEME</h2>
+            <span class="config-card-icon">🏁</span>
+            <h2 class="config-card-title">VISUAL STYLE</h2>
           </div>
           <div class="config-options">
-            <button type="button" class="config-btn opt-theme active" data-val="neo-yellow">
-              <span>Neo (Default)</span>
-              <span class="config-btn-sub">Arcade yellow &amp; cream</span>
-            </button>
-            <button type="button" class="config-btn opt-theme" data-val="dark-arcade">
-              <span>Dark Arcade</span>
-              <span class="config-btn-sub">Cyber dark &amp; neon</span>
-            </button>
-            <button type="button" class="config-btn opt-theme" data-val="light-minimal">
-              <span>Light Minimal</span>
-              <span class="config-btn-sub">High-contrast clean</span>
-            </button>
+            <div class="config-btn active" style="cursor:default;">
+              <span>Arcade Neo</span>
+              <span class="config-btn-sub">High-contrast yellow, bold borders &amp; offset shadows</span>
+            </div>
+            <div style="border:var(--border-thin); background:var(--color-surface-alt); padding:0.6rem; font-size:0.75rem; font-weight:750; color:var(--color-muted);">
+              ✦ Unified arcade aesthetic with 60 FPS SVG circuit telemetry.
+            </div>
           </div>
         </div>
 

@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en" data-theme="neo-yellow">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Type.e — Type Fast. Drive Faster.</title>
-  <meta name="description" content="Type.e Racing Arena: High-speed typing circuit with real-time previous-session ghost telemetry, character feedback, and keyboard error heatmap.">
+  <meta name="description" content="Type.e Racing Arena: Immersive SVG Grand Prix circuit with real-time personal best ghost replay, stroke feedback, and rebuilt colourful keyboard heatmap.">
 
   <!-- Google Fonts: Space Grotesk, Outfit & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,13 +13,12 @@
 
   <!-- Core & Race Stylesheets -->
   <link rel="stylesheet" href="../css/main.css">
-  <link rel="stylesheet" href="../css/themes.css">
   <link rel="stylesheet" href="../css/race.css">
 </head>
 <body>
 
   <!-- ======================================================================
-       COMPACT HEADER
+       COMPACT HEADER (No theme switcher as strictly instructed)
        ====================================================================== -->
   <header class="app-header">
     <div class="header-left">
@@ -30,7 +29,7 @@
       <span class="brand-tagline">TYPE FAST. DRIVE FASTER.</span>
     </div>
 
-    <!-- Center Navigation -->
+    <!-- Navigation Links -->
     <nav class="header-nav" aria-label="Dashboard navigation">
       <a href="home.html" class="nav-link">HOME</a>
       <a href="race.html" class="nav-link active">RACE TRACK</a>
@@ -38,20 +37,8 @@
       <a href="analytics.html" class="nav-link">ANALYTICS</a>
     </nav>
 
-    <!-- Right Quick Controls -->
+    <!-- Header Tools (Sound only, no theme selector) -->
     <div class="header-tools">
-      <select id="keyboard-layout-select" class="select-control" aria-label="Select Keyboard Layout">
-        <option value="qwerty">QWERTY</option>
-        <option value="dvorak">Dvorak</option>
-        <option value="colemak">Colemak</option>
-      </select>
-
-      <select id="theme-select" class="select-control" aria-label="Select Visual Theme">
-        <option value="neo-yellow">Neo Yellow</option>
-        <option value="dark-arcade">Dark Arcade</option>
-        <option value="light-minimal">Light Minimal</option>
-      </select>
-
       <button type="button" id="btn-sound-toggle" class="btn-sm" aria-label="Toggle Sound Effects">
         🔇 SOUND: OFF
       </button>
@@ -59,173 +46,282 @@
   </header>
 
   <!-- ======================================================================
-       MAIN DASHBOARD GRID: Left Telemetry Sidebar + Right Racing/Typing Arena
+       MAIN CONTENT: Circuit Centerpiece + Telemetry Sidebar + Passage + Keyboard
        ====================================================================== -->
-  <div class="race-container">
+  <main class="race-container">
 
-    <!-- --------------------------------------------------------------------
-         A. LEFT TELEMETRY SIDEBAR (Personal Bests removed as requested)
-         -------------------------------------------------------------------- -->
-    <aside class="race-sidebar" aria-label="Live Telemetry">
-      <div class="neo-card">
-        <div class="panel-header">
-          <h2>⚡ TELEMETRY</h2>
-          <span class="badge badge-yellow">LIVE</span>
+    <!-- 1. GRAND-PRIX SVG RACING CIRCUIT -->
+    <section class="circuit-arena-card" aria-label="Grand Prix Circuit">
+      <div class="circuit-header-bar">
+        <div class="circuit-title-group">
+          <h2 style="font-size:1.1rem;">🏎️ GRAND PRIX CIRCUIT</h2>
+          <span class="badge badge-dark">LIVE CIRCUIT TELEMETRY</span>
         </div>
-
-        <!-- Big Status Indicator -->
-        <div id="test-status-pill" class="status-pill status-ready">
-          🏁 READY TO RACE
-        </div>
-
-        <!-- Metrics Grid -->
-        <div class="sidebar-metrics">
-          <div class="metric-card hero-metric">
-            <div class="metric-label">WORDS PER MIN</div>
-            <div id="stat-wpm" class="metric-num">0</div>
-            <div style="font-size:0.68rem; font-weight:800; text-transform:uppercase; margin-top:0.2rem;">NET SPEED</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-label">ACCURACY</div>
-            <div id="stat-accuracy" class="metric-num" style="font-size: 1.45rem;">100%</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-label">TIME LEFT</div>
-            <div id="stat-timer" class="metric-num" style="font-size: 1.45rem; color: var(--color-incorrect);">60s</div>
-          </div>
-        </div>
-
-        <!-- Detailed Character Counts -->
-        <div style="margin-top: 0.85rem;">
-          <div class="stat-item">
-            <span class="stat-item-label">Total Attempted:</span>
-            <span id="stat-total-chars" class="stat-item-val">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-item-label">Correct Chars:</span>
-            <span id="stat-correct-chars" class="stat-item-val" style="color: var(--color-correct);">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-item-label">Mistakes / Errors:</span>
-            <span id="stat-incorrect-chars" class="stat-item-val" style="color: var(--color-incorrect);">0</span>
-          </div>
+        <div id="ahead-behind-indicator" class="delta-badge neutral">
+          ✨ FIRST CIRCUIT SPRINT (SETTING GHOST RECORD)
         </div>
       </div>
-    </aside>
 
-    <!-- --------------------------------------------------------------------
-         B. MAIN RIGHT STAGE (Track, Passage, Weak-Keys, Colourful Keyboard)
-         -------------------------------------------------------------------- -->
-    <main class="race-main-stage">
+      <!-- Scalable SVG Curved Circuit Track -->
+      <div class="svg-circuit-wrapper">
+        <svg id="racing-circuit-svg" viewBox="0 0 960 350" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="car-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.6"/>
+            </filter>
+            <filter id="ghost-glow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#00D2FF" flood-opacity="0.9"/>
+            </filter>
+          </defs>
 
-      <!-- 1. COMPACT RACING CIRCUIT -->
-      <section class="track-card" aria-label="Race Track">
-        <div class="track-header">
-          <div style="display:flex; align-items:center; gap:0.5rem;">
-            <h2 style="font-size:1.05rem;">🏎️ SPRINT CIRCUIT</h2>
-            <span class="badge badge-dark">TELEMETRY</span>
-          </div>
-          <div id="ahead-behind-indicator" class="delta-badge neutral">
-            ✨ FIRST SESSION (RECORDING GHOST PACE)
-          </div>
-        </div>
+          <!-- Circuit Grass Terrain -->
+          <rect width="960" height="350" fill="#2E6B4A" />
+          <!-- Sand Runoff Traps on corners -->
+          <path d="M 760,40 Q 940,90 920,220 Q 860,290 780,310 Z" fill="#D4B26F" opacity="0.85" />
+          <path d="M 40,80 Q 20,200 90,260 Q 180,300 240,280 Z" fill="#D4B26F" opacity="0.85" />
 
-        <!-- Track Canvas -->
-        <div class="track-canvas-wrapper">
-          <canvas id="racing-canvas"></canvas>
-        </div>
+          <!-- Trackside Grandstand -->
+          <rect x="220" y="325" width="220" height="18" fill="#171717" rx="2" />
+          <rect x="225" y="327" width="210" height="12" fill="#FFE600" />
+          <text x="330" y="337" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="9" fill="#171717" text-anchor="middle">GRANDSTAND A &bull; TYPE.E FANS</text>
 
-        <!-- Track Telemetry HUD -->
-        <div class="track-telemetry">
-          <div class="car-telemetry-box">
-            <div style="display:flex; align-items:center; gap:0.4rem;">
-              <div class="car-badge-pip pip-player"></div>
-              <strong style="text-transform:uppercase;">Player (#01)</strong>
-              <span id="telemetry-player-progress" style="color:var(--color-muted);">0% Done</span>
-            </div>
-            <strong id="telemetry-player-wpm" style="font-family:var(--font-mono); font-size:1rem;">0 WPM</strong>
-          </div>
+          <!-- Decorative Pine Trees / Bushes -->
+          <g fill="#1B4D31" stroke="#171717" stroke-width="1.5">
+            <circle cx="50" cy="50" r="14" /><circle cx="70" cy="45" r="11" />
+            <circle cx="890" cy="45" r="13" /><circle cx="915" cy="55" r="15" />
+            <circle cx="500" cy="70" r="12" /><circle cx="520" cy="65" r="10" />
+            <circle cx="450" cy="285" r="12" /><circle cx="470" cy="290" r="11" />
+          </g>
 
-          <div id="ghost-telemetry-box" class="car-telemetry-box">
-            <div style="display:flex; align-items:center; gap:0.4rem;">
-              <div class="car-badge-pip pip-ghost"></div>
-              <strong style="text-transform:uppercase;">Prev Session (#00)</strong>
-              <span id="telemetry-ghost-progress" style="color:var(--color-muted);">0% Done</span>
-            </div>
-            <strong id="telemetry-ghost-wpm" style="font-family:var(--font-mono); font-size:1rem;">0 WPM</strong>
-          </div>
-        </div>
-      </section>
+          <!-- Outer Red/White Kerbs (Continuous underneath asphalt) -->
+          <path d="M 90,290 C 220,290 380,290 480,290 C 620,290 740,280 820,230 C 890,180 890,120 820,85 C 750,50 660,60 600,90 C 530,125 470,130 400,85 C 330,40 220,45 140,85 C 70,125 60,190 120,225 C 180,260 260,235 340,195 C 410,165 490,165 560,195 C 640,230 740,240 870,240"
+                fill="none" stroke="#FFFFFF" stroke-width="58" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 90,290 C 220,290 380,290 480,290 C 620,290 740,280 820,230 C 890,180 890,120 820,85 C 750,50 660,60 600,90 C 530,125 470,130 400,85 C 330,40 220,45 140,85 C 70,125 60,190 120,225 C 180,260 260,235 340,195 C 410,165 490,165 560,195 C 640,230 740,240 870,240"
+                fill="none" stroke="#FF3366" stroke-width="58" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="14 14" />
 
-      <!-- 2. TYPING PASSAGE SECTION -->
-      <section class="passage-card" aria-label="Typing Passage">
-        <div class="panel-header" style="margin-bottom:0.5rem;">
-          <h3 style="font-size:0.9rem;">📝 PASSAGE SPRINT</h3>
-          <button type="button" id="btn-restart" class="btn-sm btn-primary">⚡ Restart Race</button>
-        </div>
+          <!-- Main Asphalt Track Path -->
+          <path id="race-track-path"
+                d="M 90,290 C 220,290 380,290 480,290 C 620,290 740,280 820,230 C 890,180 890,120 820,85 C 750,50 660,60 600,90 C 530,125 470,130 400,85 C 330,40 220,45 140,85 C 70,125 60,190 120,225 C 180,260 260,235 340,195 C 410,165 490,165 560,195 C 640,230 740,240 870,240"
+                fill="none" stroke="#22252E" stroke-width="48" stroke-linecap="round" stroke-linejoin="round" />
 
-        <div style="position:relative;">
-          <!-- Character feedback box -->
-          <div id="passage-display" class="passage-display" tabindex="0">
-            <!-- Characters injected dynamically -->
-          </div>
+          <!-- Outer Edge White Borders -->
+          <path d="M 90,290 C 220,290 380,290 480,290 C 620,290 740,280 820,230 C 890,180 890,120 820,85 C 750,50 660,60 600,90 C 530,125 470,130 400,85 C 330,40 220,45 140,85 C 70,125 60,190 120,225 C 180,260 260,235 340,195 C 410,165 490,165 560,195 C 640,230 740,240 870,240"
+                fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.75" />
 
-          <!-- CRITICAL: Single source of truth hidden input -->
-          <input type="text" id="typing-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type passage text here" />
-        </div>
+          <!-- Center Lane Divider (Dashed Yellow Line) -->
+          <path d="M 90,290 C 220,290 380,290 480,290 C 620,290 740,280 820,230 C 890,180 890,120 820,85 C 750,50 660,60 600,90 C 530,125 470,130 400,85 C 330,40 220,45 140,85 C 70,125 60,190 120,225 C 180,260 260,235 340,195 C 410,165 490,165 560,195 C 640,230 740,240 870,240"
+                fill="none" stroke="#FFE600" stroke-width="2.5" stroke-dasharray="14 12" />
 
-        <!-- Progress bar -->
-        <div class="passage-footer-row">
-          <span>PROGRESS</span>
-          <div class="passage-progress-track">
-            <div id="passage-progress-fill" class="passage-progress-bar"></div>
-          </div>
-          <span id="passage-progress-text">0%</span>
-        </div>
-      </section>
+          <!-- START LINE Checkered Marker -->
+          <g transform="translate(85, 266)">
+            <rect x="0" y="0" width="10" height="48" fill="#171717" />
+            <rect x="0" y="0" width="5" height="12" fill="#FFF" />
+            <rect x="5" y="12" width="5" height="12" fill="#FFF" />
+            <rect x="0" y="24" width="5" height="12" fill="#FFF" />
+            <rect x="5" y="36" width="5" height="12" fill="#FFF" />
+            <text x="-4" y="-6" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="10" fill="#FFF">START 🏁</text>
+          </g>
 
-      <!-- 3. WEAK-KEY SUGGESTIONS BAR (Directly above keyboard) -->
-      <section class="weak-keys-strip" aria-label="Weak Key Suggestions">
-        <div class="weak-keys-left">
-          <span class="weak-keys-label">⚠️ WEAKEST KEYS DETECTED:</span>
-          <div id="weak-chips-list" class="weak-chips-list">
-            <!-- Dynamically populated chips -->
-          </div>
-        </div>
-        <button type="button" id="btn-quick-drill" class="btn-sm btn-primary">
-          🎯 Practice Weak Keys
-        </button>
-      </section>
+          <!-- Checkpoint Sector Markers -->
+          <g font-family="'JetBrains Mono', monospace" font-weight="900" font-size="9" fill="#FFE600">
+            <text x="825" y="195">SEC 1 (25%)</text>
+            <text x="460" y="115">SEC 2 (50%)</text>
+            <text x="145" y="210">SEC 3 (75%)</text>
+          </g>
 
-      <!-- 4. COLOURFUL VIRTUAL KEYBOARD & HEATMAP -->
-      <section class="keyboard-card" aria-label="Heatmap Keyboard">
-        <div class="kb-top-bar">
+          <!-- FINISH LINE Gantry Arch -->
+          <g transform="translate(860, 216)">
+            <rect x="0" y="0" width="14" height="48" fill="#171717" />
+            <rect x="0" y="0" width="7" height="12" fill="#FFF" />
+            <rect x="7" y="12" width="7" height="12" fill="#FFF" />
+            <rect x="0" y="24" width="7" height="12" fill="#FFF" />
+            <rect x="7" y="36" width="7" height="12" fill="#FFF" />
+            <rect x="-12" y="-18" width="40" height="14" fill="#FFE600" stroke="#171717" stroke-width="1.5" />
+            <text x="8" y="-8" font-family="'Space Grotesk', sans-serif" font-weight="950" font-size="8" fill="#171717" text-anchor="middle">FINISH</text>
+          </g>
+
+          <!-- DYNAMIC CAR SPRITES (Positioned & Rotated Mathematically along the SVG Path) -->
+
+          <!-- 1. GHOST CAR (#00 PB) — Replays previous personal-best session -->
+          <g id="ghost-car-group" style="display:none;" filter="url(#ghost-glow)">
+            <rect x="-24" y="-10" width="48" height="20" rx="3" fill="#00D2FF" fill-opacity="0.25" stroke="#00D2FF" stroke-width="2" stroke-dasharray="3 2" />
+            <rect x="-8" y="-7" width="16" height="14" rx="2" fill="#00FF88" fill-opacity="0.35" stroke="#00D2FF" stroke-width="1.5" />
+            <rect x="-26" y="-12" width="5" height="24" fill="#00D2FF" />
+            <rect x="-18" y="-13" width="8" height="4" fill="#171717" />
+            <rect x="10" y="-13" width="8" height="4" fill="#171717" />
+            <rect x="-18" y="9" width="8" height="4" fill="#171717" />
+            <rect x="10" y="9" width="8" height="4" fill="#171717" />
+            <text x="0" y="4" font-family="'JetBrains Mono', monospace" font-weight="900" font-size="7" fill="#FFFFFF" text-anchor="middle">PB#00</text>
+            <!-- Overhead Ghost Badge -->
+            <rect x="-28" y="-28" width="56" height="14" fill="#00D2FF" stroke="#171717" stroke-width="1.5" rx="1" />
+            <text id="ghost-car-badge" x="0" y="-18" font-family="'Space Grotesk', sans-serif" font-weight="900" font-size="8" fill="#171717" text-anchor="middle">PB: 0 WPM</text>
+          </g>
+
+          <!-- 2. PLAYER CAR (#01) — Responds to live typing progress & WPM -->
+          <g id="player-car-group" filter="url(#car-shadow)">
+            <!-- Chassis -->
+            <rect x="-24" y="-10" width="48" height="20" rx="3" fill="#FFE600" stroke="#171717" stroke-width="2.5" />
+            <!-- Racing Stripes -->
+            <rect x="-24" y="-3" width="48" height="6" fill="#FF3366" />
+            <!-- Cockpit Window -->
+            <rect x="-8" y="-7" width="16" height="14" rx="2" fill="#FFFFFF" stroke="#171717" stroke-width="2" />
+            <rect x="2" y="-5" width="5" height="10" fill="#00D2FF" />
+            <!-- Rear Spoiler -->
+            <rect x="-27" y="-13" width="6" height="26" fill="#FF3366" stroke="#171717" stroke-width="2" />
+            <!-- Wheels -->
+            <rect x="-18" y="-14" width="9" height="5" fill="#171717" rx="1" />
+            <rect x="9" y="-14" width="9" height="5" fill="#171717" rx="1" />
+            <rect x="-18" y="9" width="9" height="5" fill="#171717" rx="1" />
+            <rect x="9" y="9" width="9" height="5" fill="#171717" rx="1" />
+            <!-- Car Number -->
+            <text x="0" y="4" font-family="'JetBrains Mono', monospace" font-weight="900" font-size="8" fill="#171717" text-anchor="middle">#01</text>
+            <!-- Floating Player Badge -->
+            <rect x="-30" y="-30" width="60" height="15" fill="#FFE600" stroke="#171717" stroke-width="1.5" rx="1" />
+            <text id="player-car-badge" x="0" y="-19" font-family="'Space Grotesk', sans-serif" font-weight="950" font-size="8" fill="#171717" text-anchor="middle">YOU: 0 WPM</text>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Telemetry Pills row below circuit -->
+      <div class="circuit-telemetry-row">
+        <div class="car-telemetry-pill">
           <div style="display:flex; align-items:center; gap:0.4rem;">
-            <h3 style="font-size:0.9rem;">⌨️ ERROR HEATMAP</h3>
-            <span class="badge badge-yellow">LIVE TELEMETRY</span>
+            <div class="car-badge-pip pip-player"></div>
+            <strong>Player (#01)</strong>
+            <span id="telemetry-player-progress" style="color:var(--color-muted);">0% Done</span>
           </div>
-
-          <!-- Heatmap Legend -->
-          <div class="kb-legend">
-            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-untested)"></div> Untested</div>
-            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-excellent)"></div> &lt;3%</div>
-            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-low)"></div> 3-8%</div>
-            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-med)"></div> 8-15%</div>
-            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-high)"></div> 15-25%</div>
-            <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-critical)"></div> &gt;25% Err</div>
-          </div>
+          <strong id="telemetry-player-wpm" style="font-family:var(--font-mono); font-size:1.05rem;">0 WPM</strong>
         </div>
 
-        <!-- Virtual Keyboard Layout Grid -->
-        <div id="virtual-keyboard" class="virtual-kb">
-          <!-- Dynamically populated keys -->
+        <div id="ghost-telemetry-box" class="car-telemetry-pill">
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <div class="car-badge-pip pip-ghost"></div>
+            <strong>Ghost PB (#00)</strong>
+            <span id="telemetry-ghost-progress" style="color:var(--color-muted);">0% Done</span>
+          </div>
+          <strong id="telemetry-ghost-wpm" style="font-family:var(--font-mono); font-size:1.05rem;">0 WPM</strong>
         </div>
-      </section>
+      </div>
+    </section>
 
-    </main>
-  </div>
+    <!-- 2. DASHBOARD SPLIT: Telemetry Sidebar + Main Typing / Keyboard Stage -->
+    <div class="race-split-grid">
+
+      <!-- LEFT TELEMETRY SIDEBAR -->
+      <aside class="telemetry-sidebar" aria-label="Typing Performance Telemetry">
+        <div class="neo-card">
+          <div class="panel-header">
+            <h2>⚡ TELEMETRY</h2>
+            <span class="badge badge-yellow">LIVE</span>
+          </div>
+
+          <div id="test-status-pill" class="status-pill status-ready">
+            🏁 READY TO RACE
+          </div>
+
+          <div class="sidebar-metrics-grid">
+            <div class="metric-card hero-metric">
+              <div class="metric-label">WORDS PER MIN</div>
+              <div id="stat-wpm" class="metric-num">0</div>
+              <div style="font-size:0.65rem; font-weight:850; text-transform:uppercase; margin-top:0.2rem;">NET SPEED</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">ACCURACY</div>
+              <div id="stat-accuracy" class="metric-num" style="font-size:1.4rem;">100%</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">TIME LEFT</div>
+              <div id="stat-timer" class="metric-num" style="font-size:1.4rem; color:var(--color-incorrect);">60s</div>
+            </div>
+          </div>
+
+          <div style="margin-top:0.75rem;">
+            <div class="stat-item">
+              <span class="stat-item-label">Attempted Strokes:</span>
+              <span id="stat-total-chars" class="stat-item-val">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-item-label">Correct Characters:</span>
+              <span id="stat-correct-chars" class="stat-item-val" style="color:var(--color-correct);">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-item-label">Mistakes / Errors:</span>
+              <span id="stat-incorrect-chars" class="stat-item-val" style="color:var(--color-incorrect);">0</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT TYPING & KEYBOARD STAGE -->
+      <div class="typing-stage">
+
+        <!-- TYPING PASSAGE CARD -->
+        <section class="passage-card" aria-label="Typing Passage Box">
+          <div class="panel-header" style="margin-bottom:0.45rem;">
+            <h3 style="font-size:0.9rem;">📝 PASSAGE SPRINT</h3>
+            <button type="button" id="btn-restart" class="btn-sm btn-primary">⚡ Restart Race</button>
+          </div>
+
+          <div style="position:relative;">
+            <div id="passage-display" class="passage-display" tabindex="0">
+              <!-- Dynamically populated character spans -->
+            </div>
+            <!-- Single Source of Truth Input -->
+            <input type="text" id="typing-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type passage text here" />
+          </div>
+
+          <div class="passage-footer-row">
+            <span>CIRCUIT PROGRESS</span>
+            <div class="passage-progress-track">
+              <div id="passage-progress-fill" class="passage-progress-bar"></div>
+            </div>
+            <span id="passage-progress-text">0% (0/0)</span>
+          </div>
+        </section>
+
+        <!-- WEAK-KEY DETECTION STRIP (Directly above keyboard) -->
+        <section class="weak-keys-strip" aria-label="Weak Key Suggestions">
+          <div class="weak-keys-left">
+            <span class="weak-keys-label">⚠️ WEAKEST KEYS DETECTED:</span>
+            <div id="weak-chips-list" class="weak-chips-list">
+              <!-- Dynamically populated chips -->
+            </div>
+          </div>
+          <button type="button" id="btn-quick-drill" class="btn-sm btn-primary">
+            🎯 Practice Weak Keys
+          </button>
+        </section>
+
+        <!-- REBUILT COLOURFUL ERROR HEATMAP KEYBOARD -->
+        <section class="keyboard-card" aria-label="Error Heatmap Keyboard">
+          <div class="kb-top-bar">
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+              <h3 style="font-size:0.9rem;">⌨️ ERROR HEATMAP</h3>
+              <span class="badge badge-yellow">LIVE TELEMETRY</span>
+            </div>
+
+            <div class="kb-legend">
+              <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-untested)"></div> Untested</div>
+              <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-excellent)"></div> &lt;3%</div>
+              <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-low)"></div> 3-8%</div>
+              <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-med)"></div> 8-15%</div>
+              <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-high)"></div> 15-25%</div>
+              <div style="display:flex; align-items:center; gap:0.25rem;"><div class="legend-swatch" style="background:var(--hm-critical)"></div> &gt;25% Err</div>
+            </div>
+          </div>
+
+          <!-- Rebuilt 15-Unit Proportional Keyboard Grid -->
+          <div id="virtual-keyboard" class="virtual-kb">
+            <!-- Dynamically populated keys -->
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </main>
 
   <!-- ======================================================================
        RESULTS MODAL

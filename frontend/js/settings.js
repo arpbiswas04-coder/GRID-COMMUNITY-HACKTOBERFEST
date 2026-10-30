@@ -1,6 +1,6 @@
 // ==========================================================================
-// TYPE.E — SETTINGS, THEMES & AUDIO SYNTHESIZER (settings.js)
-// Web Audio API engine & visual theme manager
+// TYPE.E — AUDIO SYNTHESIZER & SETTINGS (settings.js)
+// Web Audio API sound effects engine & global toast notifications
 // ==========================================================================
 
 class AudioSynth {
@@ -37,11 +37,11 @@ class AudioSynth {
 
     const now = this.ctx.currentTime;
     if (isCorrect) {
-      // Crisp mechanical switch click
+      // Crisp mechanical key switch click
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = "triangle";
-      osc.frequency.setValueAtTime(800 + Math.random() * 200, now);
+      osc.frequency.setValueAtTime(820 + Math.random() * 180, now);
       osc.frequency.exponentialRampToValueAtTime(320, now + 0.035);
 
       gain.gain.setValueAtTime(0.12, now);
@@ -52,12 +52,12 @@ class AudioSynth {
       osc.start(now);
       osc.stop(now + 0.035);
     } else {
-      // Low frequency buzz for error
+      // Typo warning buzz
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(140, now);
-      osc.frequency.linearRampToValueAtTime(100, now + 0.08);
+      osc.frequency.setValueAtTime(145, now);
+      osc.frequency.linearRampToValueAtTime(95, now + 0.08);
 
       gain.gain.setValueAtTime(0.2, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
@@ -123,13 +123,6 @@ class AudioSynth {
 
 const audioSynth = new AudioSynth();
 
-function applyTheme(themeName) {
-  document.documentElement.setAttribute("data-theme", themeName);
-  if (window.TypeEStorage) {
-    window.TypeEStorage.update({ theme: themeName });
-  }
-}
-
 function toggleSound() {
   const state = window.TypeEStorage.get();
   const next = !state.soundEnabled;
@@ -139,7 +132,7 @@ function toggleSound() {
     audioSynth.init();
     audioSynth.resume();
     audioSynth.playCountdown(true);
-    showToast("Sound effects enabled!", "success");
+    showToast("Audio sound effects enabled!", "success");
   } else {
     showToast("Audio muted.");
   }
@@ -176,7 +169,6 @@ function showToast(message, type = "info") {
 
 window.TypeESettings = {
   synth: audioSynth,
-  applyTheme,
   toggleSound,
   updateSoundButton,
   showToast

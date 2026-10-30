@@ -6,15 +6,14 @@
 const STORAGE_KEY = "hackday-haldia-team-zenith";
 
 const DEFAULT_STATE = {
-  version: "3.0.0",
-  theme: "neo-yellow",        // 'neo-yellow' | 'dark-arcade' | 'light-minimal'
+  version: "4.0.0",
   soundEnabled: false,        // Default disabled
   keyboardLayout: "qwerty",   // 'qwerty' | 'dvorak' | 'colemak'
   difficulty: "medium",       // 'easy' | 'medium' | 'hard' | 'custom'
   duration: 60,               // 30 | 60 | 120
-  promptChoice: "default",    // 'default' | 'custom'
+  promptChoice: "default",    // 'default' | 'custom' (independent of difficulty)
   customPassage: "",
-  previousSessionRace: null,  // { timeline: [{time, progress, wpm}], wpm: N, duration: D, date: "..." }
+  bestGhostRace: null,        // { timeline: [{time, progress, wpm}], wpm: N, duration: D, accuracy: A, date: "..." }
   personalBests: {
     highestWPM: 0,
     bestAccuracy: 0,
@@ -41,17 +40,20 @@ function loadState() {
       appState.keyStatistics = parsed.keyStatistics || {};
       appState.testHistory = Array.isArray(parsed.testHistory) ? parsed.testHistory : [];
       appState.practiceHistory = Array.isArray(parsed.practiceHistory) ? parsed.practiceHistory : [];
-      
-      // Preserve or migrate previous session race
-      if (parsed.previousSessionRace && parsed.previousSessionRace.timeline) {
-        appState.previousSessionRace = parsed.previousSessionRace;
-      } else if (parsed.bestRaceTimelines && (parsed.bestRaceTimelines["60"] || parsed.bestRaceTimelines["30"])) {
+
+      // Migration: restore ghost race from bestGhostRace, previousSessionRace, or legacy timelines
+      if (parsed.bestGhostRace && parsed.bestGhostRace.timeline && parsed.bestGhostRace.timeline.length > 0) {
+        appState.bestGhostRace = parsed.bestGhostRace;
+      } else if (parsed.previousSessionRace && parsed.previousSessionRace.timeline && parsed.previousSessionRace.timeline.length > 0) {
+        appState.bestGhostRace = parsed.previousSessionRace;
+      } else if (parsed.bestRaceTimelines) {
         const legacy = parsed.bestRaceTimelines["60"] || parsed.bestRaceTimelines["30"] || parsed.bestRaceTimelines["120"];
         if (legacy && legacy.timeline) {
-          appState.previousSessionRace = {
+          appState.bestGhostRace = {
             timeline: legacy.timeline,
             wpm: legacy.wpm || 0,
             duration: legacy.duration || 60,
+            accuracy: legacy.accuracy || 100,
             date: legacy.date || new Date().toISOString()
           };
         }
@@ -84,7 +86,7 @@ function updateState(updates) {
   return appState;
 }
 
-// Global accessor for starter compatibility
+// Global accessor
 window.TypeEStorage = {
   get: getState,
   load: loadState,

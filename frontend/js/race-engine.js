@@ -1,13 +1,19 @@
 // ==========================================================================
-// TYPE.E — RACING ENGINE & GHOST REPLAY (race-engine.js)
-// 60 FPS HTML5 Canvas Racing Circuit with Previous-Session Ghost Replay
+// TYPE.E — RACING ENGINE & SVG CURVED CIRCUIT (race-engine.js)
+// Immersive winding Grand-Prix circuit with mathematically accurate path tracking
 // ==========================================================================
 
 class RaceEngine {
   constructor() {
-    this.canvas = null;
-    this.ctx = null;
+    this.svg = null;
+    this.trackPath = null;
+    this.totalLength = 0;
+    this.playerCarEl = null;
+    this.ghostCarEl = null;
+    this.playerBadgeEl = null;
+    this.ghostBadgeEl = null;
     this.animId = null;
+
     this.playerProgress = 0;
     this.playerWPM = 0;
     this.ghostProgress = 0;
@@ -17,42 +23,41 @@ class RaceEngine {
     this.elapsedSeconds = 0;
   }
 
-  init(canvasSelector = "#racing-canvas") {
-    this.canvas = document.querySelector(canvasSelector);
-    if (!this.canvas) return;
-    this.ctx = this.canvas.getContext("2d");
-    this.resizeCanvas();
-    window.addEventListener("resize", () => this.resizeCanvas());
+  init(svgSelector = "#racing-circuit-svg") {
+    this.svg = document.querySelector(svgSelector);
+    if (!this.svg) return;
+
+    this.trackPath = this.svg.querySelector("#race-track-path");
+    if (this.trackPath) {
+      this.totalLength = this.trackPath.getTotalLength();
+    }
+
+    this.playerCarEl = this.svg.querySelector("#player-car-group");
+    this.ghostCarEl = this.svg.querySelector("#ghost-car-group");
+    this.playerBadgeEl = this.svg.querySelector("#player-car-badge");
+    this.ghostBadgeEl = this.svg.querySelector("#ghost-car-badge");
 
     this.loadGhostSession();
     this.startRenderLoop();
   }
 
-  resizeCanvas() {
-    if (!this.canvas || !this.ctx) return;
-    const rect = this.canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    this.canvas.width = Math.floor(rect.width * dpr);
-    this.canvas.height = Math.floor(145 * dpr);
-    this.ctx.resetTransform?.();
-    this.ctx.scale(dpr, dpr);
-  }
-
   loadGhostSession() {
     const state = window.TypeEStorage.get();
-    const prev = state.previousSessionRace;
+    const ghostRecord = state.bestGhostRace;
 
-    // Check if a real previous session exists
-    if (prev && prev.timeline && prev.timeline.length > 0) {
+    if (ghostRecord && ghostRecord.timeline && ghostRecord.timeline.length > 0) {
       this.hasGhost = true;
-      this.ghostTimeline = prev.timeline;
-      this.ghostWPM = prev.wpm || 0;
+      this.ghostTimeline = ghostRecord.timeline;
+      this.ghostWPM = ghostRecord.wpm || 0;
+      if (this.ghostCarEl) this.ghostCarEl.style.display = "block";
     } else {
       this.hasGhost = false;
       this.ghostTimeline = null;
       this.ghostWPM = 0;
+      if (this.ghostCarEl) this.ghostCarEl.style.display = "none";
     }
 
+    this.updateTelemetryBars();
     this.updateDeltaIndicator();
   }
 
@@ -62,15 +67,16 @@ class RaceEngine {
     this.ghostProgress = 0;
     this.elapsedSeconds = 0;
     this.loadGhostSession();
+    this.positionCars();
     this.updateTelemetryBars();
   }
 
   updateLiveRace(progress, wpm, elapsedSec) {
-    this.playerProgress = Math.min(1, progress);
+    this.playerProgress = Math.min(1, Math.max(0, progress));
     this.playerWPM = wpm;
     this.elapsedSeconds = elapsedSec;
 
-    // Interpolate ghost from previous session timeline
+    // Interpolate ghost performance from personal best timeline
     if (this.hasGhost && this.ghostTimeline) {
       const g = this.interpolateGhost(elapsedSec);
       this.ghostProgress = g.progress;
@@ -80,6 +86,7 @@ class RaceEngine {
       this.ghostWPM = 0;
     }
 
+    this.positionCars();
     this.updateTelemetryBars();
     this.updateDeltaIndicator();
   }
@@ -101,11 +108,59 @@ class RaceEngine {
         const ratio = span > 0 ? (t - s1.time) / span : 0;
         const p = s1.progress + (s2.progress - s1.progress) * ratio;
         const w = Math.round(s1.wpm + (s2.wpm - s1.wpm) * ratio);
-        return { progress: Math.min(1, p), wpm: w };
+        return { progress: Math.min(1, Math.max(0, p)), wpm: w };
       }
     }
 
     return { progress: tl[0].progress, wpm: tl[0].wpm };
+  }
+
+  positionCars() {
+    if (!this.trackPath || this.totalLength === 0) return;
+
+    // 1. Calculate Player Car position and heading along curve
+    const pDist = this.playerProgress * this.totalLength;
+    const pPt = this.trackPath.getPointAtLength(pDist);
+    const pPtAhead = this.trackPath.getPointAtLength(Math.min(this.totalLength, pDist + 4));
+    const pAngle = Math.atan2(pPtAhead.y - pPt.y, pPtAhead.x - pPt.x) * (180 / Math.PI);
+
+    // Lateral lane offset (perpendicular to heading)
+    const pNormX = -Math.sin(pAngle * Math.PI / 180);
+    const pNormY = Math.cos(pAngle * Math.PI / 180);
+    const pOffset = this.hasGhost ? -10 : 0; // Inner lane if ghost is active
+
+    const pX = pPt.x + (pNormX * pOffset);
+    const pY = pPt.y + (pNormY * pOffset);
+
+    if (this.playerCarEl) {
+      this.playerCarEl.setAttribute("transform", `translate(${pX}, ${pY}) rotate(${pAngle})`);
+    }
+
+    // Update Player Car Badge text
+    if (this.playerBadgeEl) {
+      this.playerBadgeEl.textContent = `YOU: ${this.playerWPM} WPM`;
+    }
+
+    // 2. Position Ghost Car (Outer Lane) if available
+    if (this.hasGhost && this.ghostCarEl) {
+      const gDist = this.ghostProgress * this.totalLength;
+      const gPt = this.trackPath.getPointAtLength(gDist);
+      const gPtAhead = this.trackPath.getPointAtLength(Math.min(this.totalLength, gDist + 4));
+      const gAngle = Math.atan2(gPtAhead.y - gPt.y, gPtAhead.x - gPt.x) * (180 / Math.PI);
+
+      const gNormX = -Math.sin(gAngle * Math.PI / 180);
+      const gNormY = Math.cos(gAngle * Math.PI / 180);
+      const gOffset = 10; // Outer lane
+
+      const gX = gPt.x + (gNormX * gOffset);
+      const gY = gPt.y + (gNormY * gOffset);
+
+      this.ghostCarEl.setAttribute("transform", `translate(${gX}, ${gY}) rotate(${gAngle})`);
+
+      if (this.ghostBadgeEl) {
+        this.ghostBadgeEl.textContent = `PB: ${this.ghostWPM} WPM`;
+      }
+    }
   }
 
   updateTelemetryBars() {
@@ -133,286 +188,89 @@ class RaceEngine {
 
     if (!this.hasGhost) {
       badge.className = "delta-badge neutral";
-      badge.innerHTML = `✨ FIRST SESSION (RECORDING GHOST PACE)`;
+      badge.innerHTML = `✨ FIRST CIRCUIT SPRINT (SETTING GHOST RECORD)`;
       return;
     }
 
     const diffProgress = this.playerProgress - this.ghostProgress;
     const diffWpm = this.playerWPM - this.ghostWPM;
-    const meters = Math.round(Math.abs(diffProgress) * 400);
+    const meters = Math.round(Math.abs(diffProgress) * 500); // 500m Grand Prix track
 
     if (diffProgress > 0.015) {
       badge.className = "delta-badge ahead";
       badge.innerHTML = `⚡ LEADING BY +${meters}m (${diffWpm >= 0 ? '+' : ''}${diffWpm} WPM)`;
     } else if (diffProgress < -0.015) {
       badge.className = "delta-badge behind";
-      badge.innerHTML = `⚠️ PREV SESSION +${meters}m (${diffWpm >= 0 ? '+' : ''}${diffWpm} WPM)`;
+      badge.innerHTML = `⚠️ GHOST LEADING BY +${meters}m (${diffWpm >= 0 ? '+' : ''}${diffWpm} WPM)`;
     } else {
       badge.className = "delta-badge neutral";
-      badge.innerHTML = `🏁 HEAD TO HEAD`;
+      badge.innerHTML = `🏁 HEAD TO HEAD ON CIRCUIT`;
     }
   }
 
   startRenderLoop() {
     if (this.animId) cancelAnimationFrame(this.animId);
     const loop = () => {
-      this.drawTrack();
+      this.positionCars();
       this.animId = requestAnimationFrame(loop);
     };
     loop();
   }
 
-  drawTrack() {
-    if (!this.canvas || !this.ctx) return;
-    const rect = this.canvas.getBoundingClientRect();
-    const width = rect.width;
-    const height = 145;
-    const ctx = this.ctx;
-
-    ctx.clearRect(0, 0, width, height);
-
-    const trackX = 16;
-    const trackW = width - 32;
-    const trackY = 16;
-    const trackH = 112;
-    const laneH = trackH / (this.hasGhost ? 2 : 1);
-
-    // 1. Asphalt Base
-    ctx.fillStyle = "#1E2028";
-    ctx.fillRect(trackX, trackY, trackW, trackH);
-
-    // 2. Outer Border
-    ctx.lineWidth = 3.5;
-    ctx.strokeStyle = "#171717";
-    ctx.strokeRect(trackX, trackY, trackW, trackH);
-
-    // 3. Chequered Curbs (Top & Bottom)
-    this.drawCurbs(ctx, trackX, trackY - 5, trackW, 5);
-    this.drawCurbs(ctx, trackX, trackY + trackH, trackW, 5);
-
-    // 4. Center Line (Only when 2 lanes exist)
-    if (this.hasGhost) {
-      ctx.beginPath();
-      ctx.setLineDash([14, 10]);
-      ctx.lineWidth = 2.5;
-      ctx.strokeStyle = "#FFE66D";
-      ctx.moveTo(trackX, trackY + laneH);
-      ctx.lineTo(trackX + trackW, trackY + laneH);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
-    // 5. Distance Checkpoints
-    [0.25, 0.5, 0.75].forEach(ratio => {
-      const cpX = trackX + trackW * ratio;
-      ctx.beginPath();
-      ctx.setLineDash([4, 6]);
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-      ctx.moveTo(cpX, trackY);
-      ctx.lineTo(cpX, trackY + trackH);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-      ctx.font = "bold 9px 'JetBrains Mono', monospace";
-      ctx.fillText(`${ratio * 100}%`, cpX - 9, trackY + 11);
-    });
-
-    // 6. Finish Line Checkered Banner
-    this.drawFinishLine(ctx, trackX + trackW - 14, trackY, 14, trackH);
-
-    // 7. Calculate Car Positions
-    const usableWidth = trackW - 70;
-    const playerX = trackX + (this.playerProgress * usableWidth);
-
-    if (this.hasGhost) {
-      const ghostX = trackX + (this.ghostProgress * usableWidth);
-      const ghostY = trackY + laneH + 8;
-      const playerY = trackY + 8;
-
-      // Draw Ghost Car in Lane 2
-      this.drawGhostCar(ctx, ghostX, ghostY);
-      this.drawBadge(ctx, ghostX + 28, ghostY - 3, `GHOST: ${this.ghostWPM}`, "#00D2FF", "#000");
-
-      // Draw Player Car in Lane 1
-      this.drawPlayerCar(ctx, playerX, playerY);
-      this.drawBadge(ctx, playerX + 28, playerY - 3, `YOU: ${this.playerWPM}`, "#FFE66D", "#000");
-    } else {
-      // Single Car Centered
-      const playerY = trackY + (trackH / 2) - 14;
-      this.drawPlayerCar(ctx, playerX, playerY);
-      this.drawBadge(ctx, playerX + 28, playerY - 3, `YOU: ${this.playerWPM} WPM`, "#FFE66D", "#000");
-    }
-  }
-
-  drawCurbs(ctx, x, y, w, h) {
-    const blockW = 12;
-    const count = Math.ceil(w / blockW);
-    for (let i = 0; i < count; i++) {
-      ctx.fillStyle = i % 2 === 0 ? "#FF3366" : "#FFFFFF";
-      ctx.fillRect(x + i * blockW, y, blockW, h);
-    }
-  }
-
-  drawFinishLine(ctx, x, y, w, h) {
-    const sq = 7;
-    const cols = Math.ceil(w / sq);
-    const rows = Math.ceil(h / sq);
-    for (let c = 0; c < cols; c++) {
-      for (let r = 0; r < rows; r++) {
-        ctx.fillStyle = (c + r) % 2 === 0 ? "#FFFFFF" : "#171717";
-        ctx.fillRect(x + c * sq, y + r * sq, sq, sq);
-      }
-    }
-  }
-
-  drawPlayerCar(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-
-    // Speed Sparks
-    if (this.playerWPM > 35) {
-      ctx.fillStyle = "#FF9234";
-      ctx.fillRect(-8 + Math.sin(Date.now() / 40) * 3, 14, 6, 3);
-      ctx.fillStyle = "#FFE66D";
-      ctx.fillRect(-12 + Math.cos(Date.now() / 50) * 4, 15, 5, 2);
-    }
-
-    // Chassis
-    ctx.fillStyle = "#FFE66D";
-    ctx.lineWidth = 2.5;
-    ctx.strokeStyle = "#171717";
-    ctx.fillRect(0, 8, 54, 18);
-    ctx.strokeRect(0, 8, 54, 18);
-
-    // Cabin
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(16, 2, 22, 10);
-    ctx.strokeRect(16, 2, 22, 10);
-
-    // Windshield
-    ctx.fillStyle = "#4D96FF";
-    ctx.fillRect(30, 4, 7, 6);
-
-    // Racing Stripe
-    ctx.fillStyle = "#171717";
-    ctx.fillRect(0, 15, 54, 3);
-
-    // Spoiler
-    ctx.fillStyle = "#FF6B6B";
-    ctx.fillRect(-3, 3, 5, 10);
-    ctx.strokeRect(-3, 3, 5, 10);
-
-    // Wheels
-    ctx.fillStyle = "#171717";
-    ctx.fillRect(6, 22, 11, 5);
-    ctx.fillRect(37, 22, 11, 5);
-
-    // Number
-    ctx.fillStyle = "#171717";
-    ctx.font = "bold 8px 'JetBrains Mono', monospace";
-    ctx.fillText("#01", 20, 18);
-
-    ctx.restore();
-  }
-
-  drawGhostCar(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.globalAlpha = 0.75;
-
-    ctx.fillStyle = "rgba(0, 210, 255, 0.2)";
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#00D2FF";
-    ctx.setLineDash([3, 2]);
-
-    ctx.fillRect(0, 8, 54, 18);
-    ctx.strokeRect(0, 8, 54, 18);
-
-    ctx.fillStyle = "rgba(0, 255, 136, 0.25)";
-    ctx.fillRect(16, 2, 22, 10);
-    ctx.strokeRect(16, 2, 22, 10);
-
-    ctx.setLineDash([]);
-    ctx.strokeStyle = "#00FF88";
-    ctx.strokeRect(-3, 3, 5, 10);
-
-    ctx.fillStyle = "#00D2FF";
-    ctx.fillRect(6, 22, 11, 4);
-    ctx.fillRect(37, 22, 11, 4);
-
-    ctx.fillStyle = "#FFFFFF";
-    ctx.font = "bold 7px 'JetBrains Mono', monospace";
-    ctx.fillText("PB👻", 18, 17);
-
-    ctx.restore();
-  }
-
-  drawBadge(ctx, x, y, text, bg, color) {
-    ctx.save();
-    ctx.font = "bold 9px 'Space Grotesk', sans-serif";
-    const w = ctx.measureText(text).width + 8;
-    const h = 15;
-
-    ctx.fillStyle = bg;
-    ctx.strokeStyle = "#171717";
-    ctx.lineWidth = 1.5;
-    ctx.fillRect(x - w / 2, y - h / 2, w, h);
-    ctx.strokeRect(x - w / 2, y - h / 2, w, h);
-
-    ctx.fillStyle = color;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(text, x, y + 0.5);
-    ctx.restore();
-  }
-
   onRaceComplete(timeline, finalWPM, accuracy, correctChars, incorrectChars, elapsedSec) {
     const state = window.TypeEStorage.get();
 
-    // 1. Evaluate outcome
     let playerWon = true;
-    let message = "Session Complete!";
+    let message = "Circuit Sprint Complete!";
     let outcomeClass = "winner-player";
 
     if (!this.hasGhost) {
-      message = "Initial Session Complete! Ghost Pace Saved.";
+      message = "Initial Circuit Record Established!";
       outcomeClass = "winner-solo";
+      // Save initial personal best ghost
+      state.bestGhostRace = {
+        timeline: timeline,
+        wpm: finalWPM,
+        duration: state.duration || 60,
+        accuracy: accuracy,
+        date: new Date().toISOString()
+      };
     } else {
-      if (this.playerProgress >= this.ghostProgress) {
+      if (this.playerProgress >= this.ghostProgress || finalWPM >= this.ghostWPM) {
         playerWon = true;
-        message = "YOU DEFEATED THE PREVIOUS SESSION!";
         outcomeClass = "winner-player";
+        if (finalWPM > this.ghostWPM && accuracy >= 80) {
+          message = "NEW PERSONAL RECORD! YOU DEFEATED THE GHOST!";
+          // Update personal best ghost
+          state.bestGhostRace = {
+            timeline: timeline,
+            wpm: finalWPM,
+            duration: state.duration || 60,
+            accuracy: accuracy,
+            date: new Date().toISOString()
+          };
+        } else {
+          message = "VICTORY! YOU CAME OUT AHEAD ON THE CIRCUIT!";
+        }
       } else {
         playerWon = false;
-        message = "PREVIOUS SESSION WON THIS SPRINT!";
+        message = "GHOST HELD THE LEAD! KEEP TRAINING TO BEAT YOUR PB!";
         outcomeClass = "winner-ghost";
       }
     }
 
-    // 2. CRITICAL: Save this session as the new PREVIOUS SESSION for future races
-    const completedSession = {
-      timeline: timeline,
-      wpm: finalWPM,
-      duration: state.duration || 60,
-      date: new Date().toISOString()
-    };
-    state.previousSessionRace = completedSession;
-
-    // 3. Update Personal Bests
+    // Update Personal Bests
     const pb = state.personalBests;
-    let isPB = false;
-    if (finalWPM > pb.highestWPM) { pb.highestWPM = finalWPM; isPB = true; }
+    if (finalWPM > pb.highestWPM) pb.highestWPM = finalWPM;
     if (accuracy > pb.bestAccuracy && finalWPM > 20) pb.bestAccuracy = accuracy;
-    if (state.duration === 30 && finalWPM > pb.best30s) { pb.best30s = finalWPM; isPB = true; }
-    if (state.duration === 60 && finalWPM > pb.best60s) { pb.best60s = finalWPM; isPB = true; }
-    if (state.duration === 120 && finalWPM > pb.best120s) { pb.best120s = finalWPM; isPB = true; }
+    if (state.duration === 30 && finalWPM > pb.best30s) pb.best30s = finalWPM;
+    if (state.duration === 60 && finalWPM > pb.best60s) pb.best60s = finalWPM;
+    if (state.duration === 120 && finalWPM > pb.best120s) pb.best120s = finalWPM;
     pb.totalTests++;
     pb.totalCharsTyped += (correctChars + incorrectChars);
 
-    // 4. Record to test history
-    const historyItem = {
+    // Save Sprint Archive Record
+    state.testHistory.unshift({
       id: "TE-" + Date.now().toString(36),
       timestamp: Date.now(),
       dateStr: new Date().toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }),
@@ -423,18 +281,15 @@ class RaceEngine {
       correctChars: correctChars,
       incorrectChars: incorrectChars,
       wonRace: playerWon
-    };
-    state.testHistory.unshift(historyItem);
+    });
     if (state.testHistory.length > 60) state.testHistory.pop();
 
     window.TypeEStorage.save();
 
-    // 5. Play Audio
     if (window.TypeESettings) {
       window.TypeESettings.synth.playFinish(playerWon);
     }
 
-    // 6. Show Results Modal
     this.showResultsModal(message, outcomeClass, finalWPM, accuracy, elapsedSec, correctChars, incorrectChars);
   }
 

@@ -1,30 +1,145 @@
 // ==========================================================================
-// TYPE.E — VIRTUAL KEYBOARD & COLOURFUL HEATMAP (keyboard.js)
-// QWERTY/Dvorak/Colemak layouts with error-rate telemetry & weak-key analysis
+// TYPE.E — REBUILT VIRTUAL KEYBOARD & HEATMAP (keyboard.js)
+// Accurate QWERTY, Dvorak & Colemak physical layouts & error telemetry
 // ==========================================================================
 
-const KEY_LAYOUTS = {
+const KEYBOARD_SPECS = {
   qwerty: [
-    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace"],
-    ["Tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\"],
-    ["Caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "Enter"],
-    ["Shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "Shift"],
-    ["Space"]
+    // Row 1 (15 units)
+    [
+      { label: "`", key: "`", w: 1 }, { label: "1", key: "1", w: 1 }, { label: "2", key: "2", w: 1 },
+      { label: "3", key: "3", w: 1 }, { label: "4", key: "4", w: 1 }, { label: "5", key: "5", w: 1 },
+      { label: "6", key: "6", w: 1 }, { label: "7", key: "7", w: 1 }, { label: "8", key: "8", w: 1 },
+      { label: "9", key: "9", w: 1 }, { label: "0", key: "0", w: 1 }, { label: "-", key: "-", w: 1 },
+      { label: "=", key: "=", w: 1 }, { label: "BACKSPACE", key: "Backspace", w: 2 }
+    ],
+    // Row 2 (15 units)
+    [
+      { label: "TAB", key: "Tab", w: 1.5 }, { label: "Q", key: "q", w: 1 }, { label: "W", key: "w", w: 1 },
+      { label: "E", key: "e", w: 1 }, { label: "R", key: "r", w: 1 }, { label: "T", key: "t", w: 1 },
+      { label: "Y", key: "y", w: 1 }, { label: "U", key: "u", w: 1 }, { label: "I", key: "i", w: 1 },
+      { label: "O", key: "o", w: 1 }, { label: "P", key: "p", w: 1 }, { label: "[", key: "[", w: 1 },
+      { label: "]", key: "]", w: 1 }, { label: "\\", key: "\\", w: 1.5 }
+    ],
+    // Row 3 (15 units)
+    [
+      { label: "CAPS", key: "Caps", w: 1.75 }, { label: "A", key: "a", w: 1 }, { label: "S", key: "s", w: 1 },
+      { label: "D", key: "d", w: 1 }, { label: "F", key: "f", w: 1 }, { label: "G", key: "g", w: 1 },
+      { label: "H", key: "h", w: 1 }, { label: "J", key: "j", w: 1 }, { label: "K", key: "k", w: 1 },
+      { label: "L", key: "l", w: 1 }, { label: ";", key: ";", w: 1 }, { label: "'", key: "'", w: 1 },
+      { label: "ENTER", key: "Enter", w: 2.25 }
+    ],
+    // Row 4 (15 units)
+    [
+      { label: "SHIFT", key: "Shift", w: 2.25 }, { label: "Z", key: "z", w: 1 }, { label: "X", key: "x", w: 1 },
+      { label: "C", key: "c", w: 1 }, { label: "V", key: "v", w: 1 }, { label: "B", key: "b", w: 1 },
+      { label: "N", key: "n", w: 1 }, { label: "M", key: "m", w: 1 }, { label: ",", key: ",", w: 1 },
+      { label: ".", key: ".", w: 1 }, { label: "/", key: "/", w: 1 }, { label: "SHIFT", key: "Shift", w: 2.75 }
+    ],
+    // Row 5 (15 units)
+    [
+      { label: "CTRL", key: "Ctrl", w: 1.5 }, { label: "ALT", key: "Alt", w: 1.25 },
+      { label: "SPACEBAR", key: "Space", w: 9.5 },
+      { label: "ALT", key: "Alt", w: 1.25 }, { label: "CTRL", key: "Ctrl", w: 1.5 }
+    ]
   ],
   dvorak: [
-    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "[", "]", "Backspace"],
-    ["Tab", "'", ",", ".", "p", "y", "f", "g", "c", "r", "l", "/", "=", "\\"],
-    ["Caps", "a", "o", "e", "u", "i", "d", "h", "t", "n", "s", "-", "Enter"],
-    ["Shift", ";", "q", "j", "k", "x", "b", "m", "w", "v", "z", "Shift"],
-    ["Space"]
+    // Row 1 (15 units)
+    [
+      { label: "`", key: "`", w: 1 }, { label: "1", key: "1", w: 1 }, { label: "2", key: "2", w: 1 },
+      { label: "3", key: "3", w: 1 }, { label: "4", key: "4", w: 1 }, { label: "5", key: "5", w: 1 },
+      { label: "6", key: "6", w: 1 }, { label: "7", key: "7", w: 1 }, { label: "8", key: "8", w: 1 },
+      { label: "9", key: "9", w: 1 }, { label: "0", key: "0", w: 1 }, { label: "[", key: "[", w: 1 },
+      { label: "]", key: "]", w: 1 }, { label: "BACKSPACE", key: "Backspace", w: 2 }
+    ],
+    // Row 2 (15 units)
+    [
+      { label: "TAB", key: "Tab", w: 1.5 }, { label: "'", key: "'", w: 1 }, { label: ",", key: ",", w: 1 },
+      { label: ".", key: ".", w: 1 }, { label: "P", key: "p", w: 1 }, { label: "Y", key: "y", w: 1 },
+      { label: "F", key: "f", w: 1 }, { label: "G", key: "g", w: 1 }, { label: "C", key: "c", w: 1 },
+      { label: "R", key: "r", w: 1 }, { label: "L", key: "l", w: 1 }, { label: "/", key: "/", w: 1 },
+      { label: "=", key: "=", w: 1 }, { label: "\\", key: "\\", w: 1.5 }
+    ],
+    // Row 3 (15 units)
+    [
+      { label: "CAPS", key: "Caps", w: 1.75 }, { label: "A", key: "a", w: 1 }, { label: "O", key: "o", w: 1 },
+      { label: "E", key: "e", w: 1 }, { label: "U", key: "u", w: 1 }, { label: "I", key: "i", w: 1 },
+      { label: "D", key: "d", w: 1 }, { label: "H", key: "h", w: 1 }, { label: "T", key: "t", w: 1 },
+      { label: "N", key: "n", w: 1 }, { label: "S", key: "s", w: 1 }, { label: "-", key: "-", w: 1 },
+      { label: "ENTER", key: "Enter", w: 2.25 }
+    ],
+    // Row 4 (15 units)
+    [
+      { label: "SHIFT", key: "Shift", w: 2.25 }, { label: ";", key: ";", w: 1 }, { label: "Q", key: "q", w: 1 },
+      { label: "J", key: "j", w: 1 }, { label: "K", key: "k", w: 1 }, { label: "X", key: "x", w: 1 },
+      { label: "B", key: "b", w: 1 }, { label: "M", key: "m", w: 1 }, { label: "W", key: "w", w: 1 },
+      { label: "V", key: "v", w: 1 }, { label: "Z", key: "z", w: 1 }, { label: "SHIFT", key: "Shift", w: 2.75 }
+    ],
+    // Row 5 (15 units)
+    [
+      { label: "CTRL", key: "Ctrl", w: 1.5 }, { label: "ALT", key: "Alt", w: 1.25 },
+      { label: "SPACEBAR", key: "Space", w: 9.5 },
+      { label: "ALT", key: "Alt", w: 1.25 }, { label: "CTRL", key: "Ctrl", w: 1.5 }
+    ]
   ],
   colemak: [
-    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace"],
-    ["Tab", "q", "w", "f", "p", "g", "j", "l", "u", "y", ";", "[", "]", "\\"],
-    ["Caps", "a", "r", "s", "t", "d", "h", "n", "e", "i", "o", "'", "Enter"],
-    ["Shift", "z", "x", "c", "v", "b", "k", "m", ",", ".", "/", "Shift"],
-    ["Space"]
+    // Row 1 (15 units)
+    [
+      { label: "`", key: "`", w: 1 }, { label: "1", key: "1", w: 1 }, { label: "2", key: "2", w: 1 },
+      { label: "3", key: "3", w: 1 }, { label: "4", key: "4", w: 1 }, { label: "5", key: "5", w: 1 },
+      { label: "6", key: "6", w: 1 }, { label: "7", key: "7", w: 1 }, { label: "8", key: "8", w: 1 },
+      { label: "9", key: "9", w: 1 }, { label: "0", key: "0", w: 1 }, { label: "-", key: "-", w: 1 },
+      { label: "=", key: "=", w: 1 }, { label: "BACKSPACE", key: "Backspace", w: 2 }
+    ],
+    // Row 2 (15 units)
+    [
+      { label: "TAB", key: "Tab", w: 1.5 }, { label: "Q", key: "q", w: 1 }, { label: "W", key: "w", w: 1 },
+      { label: "F", key: "f", w: 1 }, { label: "P", key: "p", w: 1 }, { label: "G", key: "g", w: 1 },
+      { label: "J", key: "j", w: 1 }, { label: "L", key: "l", w: 1 }, { label: "U", key: "u", w: 1 },
+      { label: "Y", key: "y", w: 1 }, { label: ";", key: ";", w: 1 }, { label: "[", key: "[", w: 1 },
+      { label: "]", key: "]", w: 1 }, { label: "\\", key: "\\", w: 1.5 }
+    ],
+    // Row 3 (15 units)
+    [
+      { label: "CAPS", key: "Caps", w: 1.75 }, { label: "A", key: "a", w: 1 }, { label: "R", key: "r", w: 1 },
+      { label: "S", key: "s", w: 1 }, { label: "T", key: "t", w: 1 }, { label: "D", key: "d", w: 1 },
+      { label: "H", key: "h", w: 1 }, { label: "N", key: "n", w: 1 }, { label: "E", key: "e", w: 1 },
+      { label: "I", key: "i", w: 1 }, { label: "O", key: "o", w: 1 }, { label: "'", key: "'", w: 1 },
+      { label: "ENTER", key: "Enter", w: 2.25 }
+    ],
+    // Row 4 (15 units)
+    [
+      { label: "SHIFT", key: "Shift", w: 2.25 }, { label: "Z", key: "z", w: 1 }, { label: "X", key: "x", w: 1 },
+      { label: "C", key: "c", w: 1 }, { label: "V", key: "v", w: 1 }, { label: "B", key: "b", w: 1 },
+      { label: "K", key: "k", w: 1 }, { label: "M", key: "m", w: 1 }, { label: ",", key: ",", w: 1 },
+      { label: ".", key: ".", w: 1 }, { label: "/", key: "/", w: 1 }, { label: "SHIFT", key: "Shift", w: 2.75 }
+    ],
+    // Row 5 (15 units)
+    [
+      { label: "CTRL", key: "Ctrl", w: 1.5 }, { label: "ALT", key: "Alt", w: 1.25 },
+      { label: "SPACEBAR", key: "Space", w: 9.5 },
+      { label: "ALT", key: "Alt", w: 1.25 }, { label: "CTRL", key: "Ctrl", w: 1.5 }
+    ]
   ]
+};
+
+// Physical QWERTY key to layout translations
+const PHYSICAL_MAP_DVORAK = {
+  'q': "'", 'w': ',', 'e': '.', 'r': 'p', 't': 'y', 'y': 'f', 'u': 'g', 'i': 'c', 'o': 'r', 'p': 'l', '[': '/', ']': '=',
+  'a': 'a', 's': 'o', 'd': 'e', 'f': 'u', 'g': 'i', 'h': 'd', 'j': 'h', 'k': 't', 'l': 'n', ';': 's', "'": '-',
+  'z': ';', 'x': 'q', 'c': 'j', 'v': 'k', 'b': 'x', 'n': 'b', 'm': 'm', ',': 'w', '.': 'v', '/': 'z',
+  'Q': '"', 'W': '<', 'E': '>', 'R': 'P', 'T': 'Y', 'Y': 'F', 'U': 'G', 'I': 'C', 'O': 'R', 'P': 'L', '{': '?', '}': '+',
+  'A': 'A', 'S': 'O', 'D': 'E', 'F': 'U', 'G': 'I', 'H': 'D', 'J': 'H', 'K': 'T', 'L': 'N', ':': 'S', '"': '_',
+  'Z': ':', 'X': 'Q', 'C': 'J', 'V': 'K', 'B': 'X', 'N': 'B', 'M': 'M', '<': 'W', '>': 'V', '?': 'Z'
+};
+
+const PHYSICAL_MAP_COLEMAK = {
+  'e': 'f', 'r': 'p', 't': 'g', 'y': 'j', 'u': 'l', 'i': 'u', 'o': 'y', 'p': ';',
+  's': 'r', 'd': 's', 'f': 't', 'g': 'd', 'j': 'n', 'k': 'e', 'l': 'i', ';': 'o',
+  'n': 'k',
+  'E': 'F', 'R': 'P', 'T': 'G', 'Y': 'J', 'U': 'L', 'I': 'U', 'O': 'Y', 'P': ':',
+  'S': 'R', 'D': 'S', 'F': 'T', 'G': 'D', 'J': 'N', 'K': 'E', 'L': 'I', ':': 'O',
+  'N': 'K'
 };
 
 class KeyboardEngine {
@@ -43,58 +158,50 @@ class KeyboardEngine {
     this.container.innerHTML = "";
 
     const state = window.TypeEStorage.get();
-    const layout = KEY_LAYOUTS[state.keyboardLayout] || KEY_LAYOUTS.qwerty;
+    const layoutName = (state.keyboardLayout || "qwerty").toLowerCase();
+    const rows = KEYBOARD_SPECS[layoutName] || KEYBOARD_SPECS.qwerty;
 
-    layout.forEach(row => {
+    rows.forEach(row => {
       const rowEl = document.createElement("div");
       rowEl.className = "kb-row";
 
-      row.forEach(key => {
+      row.forEach(item => {
         const keyEl = document.createElement("div");
         keyEl.className = "kb-key";
-        keyEl.dataset.key = key.toLowerCase();
+        keyEl.dataset.key = item.key.toLowerCase();
+        // Exact proportional flex sizing for mathematical 15-unit row alignment
+        keyEl.style.flex = `${item.w}`;
 
-        // Width Classes
-        if (key === "Backspace" || key === "Caps" || key === "Enter") {
-          keyEl.classList.add("key-wide-2");
-        } else if (key === "Tab" || key === "Shift") {
-          keyEl.classList.add("key-wide-3");
-        } else if (key === "Space") {
-          keyEl.classList.add("key-space");
-        }
-
-        // Apply Colourful Heatmap for single character keys
-        if (key.length === 1) {
-          const hmClass = this.getKeyHeatmapClass(key);
+        // Error heatmap color for printable characters
+        if (item.key.length === 1) {
+          const hmClass = this.getKeyHeatmapClass(item.key);
           keyEl.classList.add(hmClass);
 
-          // Add interactive tooltip
-          const stats = state.keyStatistics[key.toLowerCase()];
+          const stats = state.keyStatistics[item.key.toLowerCase()];
           const att = stats ? stats.attempts : 0;
           const err = stats ? stats.errors : 0;
           const pct = att > 0 ? Math.round((err / att) * 100) : 0;
 
           const tooltip = document.createElement("div");
           tooltip.className = "key-tooltip";
-          tooltip.innerHTML = `<strong>KEY: [${key.toUpperCase()}]</strong><br>Attempts: ${att}<br>Mistakes: ${err} (${pct}%)`;
+          tooltip.innerHTML = `<strong>[${item.label}]</strong><br>Attempts: ${att}<br>Mistakes: ${err} (${pct}%)`;
           keyEl.appendChild(tooltip);
         } else {
           keyEl.classList.add("hm-untested");
         }
 
-        // Label
-        const label = document.createElement("span");
-        label.textContent = key === "Space" ? "SPACEBAR" : key.toUpperCase();
-        keyEl.appendChild(label);
+        const labelSpan = document.createElement("span");
+        labelSpan.textContent = item.label;
+        keyEl.appendChild(labelSpan);
 
-        // Virtual key click inserts into single-source input
+        // Click on virtual key triggers input via single source of truth
         keyEl.onclick = (e) => {
           e.preventDefault();
-          this.highlightKey(key, true);
-          setTimeout(() => this.highlightKey(key, false), 120);
+          this.highlightKey(item.key, true);
+          setTimeout(() => this.highlightKey(item.key, false), 120);
 
           if (window.TypeETyping) {
-            window.TypeETyping.insertCharFromVirtualKey(key);
+            window.TypeETyping.insertCharFromVirtualKey(item.key);
           }
         };
 
@@ -103,6 +210,18 @@ class KeyboardEngine {
 
       this.container.appendChild(rowEl);
     });
+  }
+
+  translateInput(rawKey) {
+    const state = window.TypeEStorage.get();
+    const layout = (state.keyboardLayout || "qwerty").toLowerCase();
+    if (layout === "dvorak" && PHYSICAL_MAP_DVORAK[rawKey]) {
+      return PHYSICAL_MAP_DVORAK[rawKey];
+    }
+    if (layout === "colemak" && PHYSICAL_MAP_COLEMAK[rawKey]) {
+      return PHYSICAL_MAP_COLEMAK[rawKey];
+    }
+    return rawKey;
   }
 
   getKeyHeatmapClass(key) {
@@ -123,17 +242,15 @@ class KeyboardEngine {
     const el = document.querySelector(`[data-key="${key.toLowerCase()}"]`);
     if (!el) return;
 
-    // Reset heatmap classes
     el.classList.remove("hm-untested", "hm-excellent", "hm-low", "hm-med", "hm-high", "hm-critical");
     el.classList.add(this.getKeyHeatmapClass(key));
 
-    // Update tooltip
     const state = window.TypeEStorage.get();
     const stats = state.keyStatistics[key.toLowerCase()];
     const tooltip = el.querySelector(".key-tooltip");
     if (tooltip && stats) {
       const pct = Math.round((stats.errors / stats.attempts) * 100);
-      tooltip.innerHTML = `<strong>KEY: [${key.toUpperCase()}]</strong><br>Attempts: ${stats.attempts}<br>Mistakes: ${stats.errors} (${pct}%)`;
+      tooltip.innerHTML = `<strong>[${key.toUpperCase()}]</strong><br>Attempts: ${stats.attempts}<br>Mistakes: ${stats.errors} (${pct}%)`;
     }
 
     this.renderWeakKeySuggestions();
@@ -141,7 +258,8 @@ class KeyboardEngine {
 
   highlightKey(keyName, isPressed) {
     if (!keyName) return;
-    const k = keyName.toLowerCase();
+    const translated = this.translateInput(keyName);
+    const k = translated.toLowerCase();
     const el = document.querySelector(`[data-key="${k}"]`) || (keyName === " " ? document.querySelector(`[data-key="space"]`) : null);
     if (el) {
       if (isPressed) {

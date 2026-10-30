@@ -62,7 +62,6 @@ class TypingEngine {
     this.displayEl = document.querySelector(displaySelector);
 
     if (this.inputEl) {
-      // Remove any prior listeners by cloning or single binding
       this.inputEl.value = "";
       this.inputEl.oninput = (e) => this.handleSingleSourceInput(e);
       this.inputEl.onkeydown = (e) => this.handleAuxiliaryKeyDown(e);
@@ -91,12 +90,14 @@ class TypingEngine {
     this.liveAccuracy = 100;
     this.lastInputLength = 0;
 
+    // Choice logic: Default prompts always pick predefined; Custom text picks custom
     if (customText) {
       this.passageText = customText.trim();
-    } else if (state.promptChoice === "custom" && state.customPassage) {
+    } else if (state.promptChoice === "custom" && state.customPassage && state.customPassage.trim().length > 0) {
       this.passageText = state.customPassage.trim();
     } else {
-      const pool = PASSAGES[state.difficulty] || PASSAGES.medium;
+      const diffKey = state.difficulty === "custom" ? "medium" : state.difficulty;
+      const pool = PASSAGES[diffKey] || PASSAGES.medium;
       this.passageText = pool[Math.floor(Math.random() * pool.length)];
     }
 
@@ -135,7 +136,6 @@ class TypingEngine {
     this.updateProgressBar(0);
   }
 
-  // CRITICAL FIX: Single source of truth for input
   handleSingleSourceInput(e) {
     if (this.status === "FINISHED") {
       this.inputEl.value = this.inputEl.value.slice(0, this.chars.length);
@@ -150,10 +150,9 @@ class TypingEngine {
       this.startTest();
     }
 
-    // Determine if user added or deleted characters
+    // Process new keystrokes vs backspace
     const diff = currentLen - this.lastInputLength;
     if (diff > 0) {
-      // User typed new character(s)
       for (let i = this.lastInputLength; i < currentLen && i < this.chars.length; i++) {
         const typedChar = currentVal[i];
         const expectedChar = this.chars[i];
@@ -173,14 +172,12 @@ class TypingEngine {
         }
       }
     } else if (diff < 0) {
-      // User backspaced
       this.recalculateAccurateCounts(currentVal);
     }
 
     this.lastInputLength = currentLen;
     this.currentIndex = Math.min(currentLen, this.chars.length);
 
-    // Update visuals & telemetry
     this.updateHighlights(currentVal);
     this.calcStats();
     this.updateTelemetryUI();
@@ -235,7 +232,6 @@ class TypingEngine {
       }
     }
 
-    // Auto-scroll
     const active = spans[currentVal.length];
     if (active) {
       active.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -264,7 +260,6 @@ class TypingEngine {
     }
   }
 
-  // Virtual key click injection
   insertCharFromVirtualKey(char) {
     if (!this.inputEl || this.status === "FINISHED") return;
     this.inputEl.focus();
@@ -277,7 +272,6 @@ class TypingEngine {
       this.inputEl.value += char;
     }
 
-    // Dispatch native input event to trigger single source handler
     this.inputEl.dispatchEvent(new Event("input", { bubbles: true }));
   }
 
@@ -362,7 +356,6 @@ class TypingEngine {
     this.updateTelemetryUI();
     this.sampleRaceProgress();
 
-    // Handover to race completion & results modal
     if (window.TypeERace) {
       window.TypeERace.onRaceComplete(this.recordedTimeline, this.liveWPM, this.liveAccuracy, this.correctChars, this.incorrectChars, this.totalDuration - this.timeRemaining);
     }

@@ -1,42 +1,23 @@
 // ==========================================================================
 // TYPE.E — APPLICATION BOOTSTRAPPER (app.js)
-// Unified lifecycle management, navigation & page initialization
+// Independent configuration management & lifecycle controllers
 // ==========================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
   // 1. Load centralized state
   const state = window.TypeEStorage.load();
 
-  // 2. Apply theme
-  window.TypeESettings.applyTheme(state.theme || "neo-yellow");
-  window.TypeESettings.updateSoundButton();
+  // 2. Sound button state
+  if (window.TypeESettings) {
+    window.TypeESettings.updateSoundButton();
+  }
 
-  // 3. Bind global controls (sound, layout, theme)
   const soundBtn = document.querySelector("#btn-sound-toggle");
   if (soundBtn) {
     soundBtn.onclick = () => window.TypeESettings.toggleSound();
   }
 
-  const layoutSelect = document.querySelector("#keyboard-layout-select");
-  if (layoutSelect) {
-    layoutSelect.value = state.keyboardLayout || "qwerty";
-    layoutSelect.onchange = (e) => {
-      window.TypeEStorage.update({ keyboardLayout: e.target.value });
-      if (window.TypeEKeyboard) window.TypeEKeyboard.render();
-      window.TypeESettings.showToast(`Layout changed to ${e.target.value.toUpperCase()}`);
-    };
-  }
-
-  const themeSelect = document.querySelector("#theme-select");
-  if (themeSelect) {
-    themeSelect.value = state.theme || "neo-yellow";
-    themeSelect.onchange = (e) => {
-      window.TypeESettings.applyTheme(e.target.value);
-      window.TypeESettings.showToast(`Theme updated`);
-    };
-  }
-
-  // 4. Modal Close Triggers
+  // 3. Global Modal Closers
   document.querySelectorAll("[data-close-modal]").forEach(btn => {
     btn.onclick = (e) => {
       const modal = e.target.closest(".modal-overlay");
@@ -44,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   });
 
-  // 5. Page-Specific Initializations
+  // 4. Page Routing & Initialization
   const pathname = window.location.pathname.toLowerCase();
 
   if (pathname.includes("home") || pathname.endsWith("/") || pathname.endsWith("index.html") || document.querySelector("#btn-enter-arena")) {
@@ -59,98 +40,92 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --------------------------------------------------------------------------
-// HOMEPAGE CONTROLLER
+// HOMEPAGE CONTROLLER — INDEPENDENT 5 CONFIGURATION CATEGORIES
 // --------------------------------------------------------------------------
 function initHomePage() {
   const state = window.TypeEStorage.get();
 
-  // Highlight active buttons based on saved state
-  const setActiveOption = (selector, value, attr = "data-val") => {
+  const setActive = (selector, val, attr = "data-val") => {
     document.querySelectorAll(selector).forEach(btn => {
-      const match = btn.getAttribute(attr) === String(value);
-      btn.classList.toggle("active", match);
+      btn.classList.toggle("active", btn.getAttribute(attr) === String(val));
     });
   };
 
-  setActiveOption(".opt-diff", state.difficulty);
-  setActiveOption(".opt-time", state.duration);
-  setActiveOption(".opt-choice", state.promptChoice);
-  setActiveOption(".opt-layout", state.keyboardLayout);
-  setActiveOption(".opt-theme", state.theme);
+  // Set initial UI state independently
+  setActive(".opt-diff", state.difficulty);
+  setActive(".opt-time", state.duration);
+  setActive(".opt-choice", state.promptChoice);
+  setActive(".opt-layout", state.keyboardLayout);
 
-  // Toggle Custom Textarea visibility
   const customWrapper = document.querySelector("#custom-text-wrapper");
   const customInput = document.querySelector("#custom-text-input");
   if (customInput && state.customPassage) {
     customInput.value = state.customPassage;
   }
 
+  // CRITICAL FIX: Custom text box display is strictly governed by promptChoice
   const updateCustomVisibility = () => {
-    const isCustom = state.difficulty === "custom" || state.promptChoice === "custom";
     if (customWrapper) {
-      customWrapper.style.display = isCustom ? "flex" : "none";
+      customWrapper.style.display = (state.promptChoice === "custom") ? "flex" : "none";
     }
   };
   updateCustomVisibility();
 
-  // Card 1: Difficulty
+  // CARD 1: DIFFICULTY LEVEL (Independent: does NOT touch promptChoice)
   document.querySelectorAll(".opt-diff").forEach(btn => {
-    btn.onclick = () => {
-      setActiveOption(".opt-diff", btn.dataset.val);
-      state.difficulty = btn.dataset.val;
-      if (state.difficulty === "custom") state.promptChoice = "custom";
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const val = btn.dataset.val;
+      setActive(".opt-diff", val);
+      state.difficulty = val;
       window.TypeEStorage.save();
-      updateCustomVisibility();
     };
   });
 
-  // Card 2: Set Time
+  // CARD 2: SET TIME (Independent)
   document.querySelectorAll(".opt-time").forEach(btn => {
-    btn.onclick = () => {
-      setActiveOption(".opt-time", btn.dataset.val);
-      state.duration = parseInt(btn.dataset.val, 10);
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const val = parseInt(btn.dataset.val, 10);
+      setActive(".opt-time", val);
+      state.duration = val;
       window.TypeEStorage.save();
     };
   });
 
-  // Card 3: Choice
+  // CARD 3: CHOICE (Independent: strictly toggles default vs custom text)
   document.querySelectorAll(".opt-choice").forEach(btn => {
-    btn.onclick = () => {
-      setActiveOption(".opt-choice", btn.dataset.val);
-      state.promptChoice = btn.dataset.val;
-      if (state.promptChoice === "custom") state.difficulty = "custom";
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const val = btn.dataset.val;
+      setActive(".opt-choice", val);
+      state.promptChoice = val;
       window.TypeEStorage.save();
       updateCustomVisibility();
     };
   });
 
-  // Card 4: Layout
+  // CARD 4: KEYBOARD LAYOUT (Independent: QWERTY, Dvorak, Colemak)
   document.querySelectorAll(".opt-layout").forEach(btn => {
-    btn.onclick = () => {
-      setActiveOption(".opt-layout", btn.dataset.val);
-      state.keyboardLayout = btn.dataset.val;
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const val = btn.dataset.val;
+      setActive(".opt-layout", val);
+      state.keyboardLayout = val;
       window.TypeEStorage.save();
     };
   });
 
-  // Card 5: Theme
-  document.querySelectorAll(".opt-theme").forEach(btn => {
-    btn.onclick = () => {
-      setActiveOption(".opt-theme", btn.dataset.val);
-      state.theme = btn.dataset.val;
-      window.TypeEStorage.save();
-      window.TypeESettings.applyTheme(state.theme);
-    };
-  });
-
-  // Enter the Arena CTA
+  // ENTER THE ARENA CTA
   const enterBtn = document.querySelector("#btn-enter-arena");
   if (enterBtn) {
-    enterBtn.onclick = () => {
-      if (state.promptChoice === "custom" || state.difficulty === "custom") {
+    enterBtn.onclick = (e) => {
+      e.preventDefault();
+
+      if (state.promptChoice === "custom") {
         const text = customInput ? customInput.value.trim() : "";
         if (text.length < 15) {
-          window.TypeESettings.showToast("Custom text must be at least 15 characters!", "error");
+          if (window.TypeESettings) window.TypeESettings.showToast("Custom text must be at least 15 characters!", "error");
           if (customInput) customInput.focus();
           return;
         }
@@ -167,17 +142,15 @@ function initHomePage() {
 // RACE / TYPING PAGE CONTROLLER
 // --------------------------------------------------------------------------
 function initRacePage() {
-  window.TypeERace.init("#racing-canvas");
+  window.TypeERace.init("#racing-circuit-svg");
   window.TypeETyping.init("#typing-input", "#passage-display");
   window.TypeEKeyboard.init("#virtual-keyboard");
   window.TypeETyping.setupTest();
 
-  // Restart Button
+  // Quick restart race
   const restartBtn = document.querySelector("#btn-restart");
   if (restartBtn) {
-    restartBtn.onclick = () => {
-      window.TypeETyping.setupTest();
-    };
+    restartBtn.onclick = () => window.TypeETyping.setupTest();
   }
 
   // Quick Drill Weak Keys button above keyboard

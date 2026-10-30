@@ -1,16 +1,16 @@
 /* ==========================================================================
    TYPE.E — HOMEPAGE STYLESHEET (home.css)
-   Neo-Brutalist Landing & Configuration
+   Neo-Brutalist Arcade Landing & 5-Card Configuration Grid
    ========================================================================== */
 
 .home-container {
-  max-width: 1360px;
+  max-width: 1380px;
   width: 100%;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 2.5rem;
+  padding: 1.5rem 1.5rem 3rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 2.25rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -20,20 +20,20 @@
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   align-items: center;
-  gap: 2rem;
-  padding: 1rem 0;
+  gap: 2.5rem;
+  padding: 0.5rem 0 1rem;
 }
 
 .hero-left {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.15rem;
 }
 
 .hero-headline {
   font-family: var(--font-display);
-  font-size: 3.8rem;
-  line-height: 1.05;
+  font-size: 4rem;
+  line-height: 1.02;
   font-weight: 950;
   letter-spacing: -0.04em;
   color: var(--color-black);
@@ -43,18 +43,18 @@
   background: var(--color-primary);
   border: var(--border-heavy);
   box-shadow: var(--shadow-md);
-  padding: 0 0.4rem;
+  padding: 0 0.5rem;
   display: inline-block;
 }
 
 .hero-subtitle {
   font-size: 1.35rem;
-  font-weight: 800;
+  font-weight: 850;
   color: var(--color-black);
   letter-spacing: -0.01em;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 .hero-subtitle span {
@@ -64,8 +64,8 @@
 }
 
 .hero-subtitle .dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   background: var(--color-black);
   display: inline-block;
 }
@@ -80,14 +80,14 @@
 /* Mechanical Keyboard Illustration */
 .keyboard-illustration {
   width: 100%;
-  max-width: 440px;
+  max-width: 460px;
   border: var(--border-heavy);
   background: var(--color-surface);
   box-shadow: var(--shadow-xl);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.65rem;
   position: relative;
   transform: rotate(-1.5deg);
   transition: transform var(--trans-normal);
@@ -102,23 +102,23 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: var(--border-thick);
-  padding-bottom: 0.4rem;
+  padding-bottom: 0.45rem;
 }
 
 .kb-ill-cable {
-  width: 30px;
-  height: 10px;
+  width: 32px;
+  height: 12px;
   background: var(--color-black);
   position: absolute;
-  top: -12px;
-  left: 30px;
+  top: -14px;
+  left: 36px;
   border: 2px solid var(--color-black);
 }
 
 .kb-ill-grid {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .ill-row {
@@ -128,7 +128,7 @@
 
 .ill-key {
   flex: 1;
-  height: 32px;
+  height: 34px;
   border: var(--border-thick);
   box-shadow: 2px 2px 0px var(--color-black);
   display: flex;
@@ -136,23 +136,22 @@
   justify-content: center;
   font-family: var(--font-mono);
   font-weight: 900;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   background: var(--color-surface-alt);
 }
 
 .ill-key.key-yellow { background: var(--color-primary); }
-.ill-key.key-blue { background: var(--color-secondary); color: var(--color-white); }
+.ill-key.key-blue { background: var(--color-secondary); color: var(--color-black); }
 .ill-key.key-green { background: var(--color-correct); color: var(--color-white); }
 .ill-key.key-red { background: var(--color-accent); color: var(--color-white); }
-.ill-key.key-wide { flex: 2; }
-.ill-key.key-spacebar { flex: 5; background: var(--color-primary); }
+.ill-key.key-wide { flex: 1.8; }
+.ill-key.key-spacebar { flex: 5.5; background: var(--color-primary); }
 
-/* Neo-Brutalist Accent Marks */
 .deco-star {
   position: absolute;
   top: -18px;
   right: -15px;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: var(--color-black);
   animation: spin 10s linear infinite;
 }
@@ -163,7 +162,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   CONFIGURATION SECTION (5 CARDS)
+   5 CONFIGURATION CARDS (EQUAL 1-ROW GRID ON DESKTOP)
    -------------------------------------------------------------------------- */
 .config-section {
   display: flex;
@@ -198,17 +197,17 @@
   align-items: center;
   gap: 0.5rem;
   border-bottom: var(--border-thick);
-  padding-bottom: 0.6rem;
+  padding-bottom: 0.55rem;
   margin-bottom: 0.85rem;
 }
 
 .config-card-icon {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 .config-card-title {
   font-size: 0.85rem;
-  font-weight: 900;
+  font-weight: 950;
   letter-spacing: 0.02em;
 }
 
@@ -226,8 +225,8 @@
   padding: 0.5rem 0.65rem;
   text-align: left;
   font-family: var(--font-main);
-  font-weight: 800;
-  font-size: 0.8rem;
+  font-weight: 850;
+  font-size: 0.82rem;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
   display: flex;
@@ -245,12 +244,12 @@
   background: var(--color-primary) !important;
   border-color: var(--color-black);
   box-shadow: var(--shadow-md);
-  font-weight: 900;
+  font-weight: 950;
 }
 
 .config-btn-sub {
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: 750;
   color: var(--color-muted);
   text-transform: none;
 }
@@ -258,7 +257,7 @@
   color: var(--color-black);
 }
 
-/* Custom Text Box inside card */
+/* Custom Text Textarea inside Card 3 */
 .custom-text-wrapper {
   margin-top: 0.5rem;
   display: flex;
@@ -273,12 +272,14 @@
   background: var(--color-surface);
   padding: 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   resize: none;
   outline: none;
+  box-shadow: inset 0 0 0 1px var(--color-black);
 }
 .custom-text-box:focus {
-  border-color: var(--color-primary);
+  background: #FFFDE6;
+  border-color: var(--color-black);
 }
 
 /* --------------------------------------------------------------------------
@@ -289,18 +290,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem 0 1rem;
-  gap: 1.5rem;
+  padding: 1rem 0;
 }
 
 .btn-enter-arena {
-  font-size: 1.35rem;
-  padding: 1.15rem 2.8rem;
+  font-size: 1.45rem;
+  padding: 1.15rem 3.2rem;
   background: var(--color-primary);
   border: var(--border-heavy);
   box-shadow: var(--shadow-xl);
   font-weight: 950;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   display: inline-flex;
   align-items: center;
   gap: 0.85rem;
@@ -318,7 +318,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   BOTTOM DECORATIVE AREA
+   BOTTOM BRANDING
    -------------------------------------------------------------------------- */
 .bottom-branding {
   display: flex;
@@ -327,7 +327,7 @@
   border-top: var(--border-thick);
   padding-top: 1.25rem;
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 850;
   text-transform: uppercase;
   color: var(--color-muted);
   flex-wrap: wrap;
@@ -352,10 +352,6 @@
   .config-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  .config-grid .config-card:nth-child(4),
-  .config-grid .config-card:nth-child(5) {
-    grid-column: span 1;
-  }
 }
 
 @media (max-width: 900px) {
@@ -367,7 +363,7 @@
     justify-content: center;
   }
   .hero-headline {
-    font-size: 2.8rem;
+    font-size: 3rem;
   }
   .config-grid {
     grid-template-columns: 1fr 1fr;
@@ -376,14 +372,14 @@
 
 @media (max-width: 600px) {
   .hero-headline {
-    font-size: 2.2rem;
+    font-size: 2.3rem;
   }
   .config-grid {
     grid-template-columns: 1fr;
   }
   .btn-enter-arena {
     width: 100%;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     padding: 1rem;
   }
 }
