@@ -210,6 +210,174 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* --------------------------------------------------------------------------
+   CHARACTER FEEDBACK & CARET (EXACT RACE-PAGE VISUAL LANGUAGE)
+   -------------------------------------------------------------------------- */
+.char {
+  position: relative;
+  transition: background-color 0.04s, color 0.04s;
+}
+
+.char.char-correct {
+  color: var(--color-correct);
+  font-weight: 800;
+  background: var(--color-correct-bg);
+}
+
+.char.char-incorrect {
+  color: var(--color-incorrect);
+  background: var(--color-incorrect-bg);
+  text-decoration: underline wavy var(--color-incorrect);
+  font-weight: 800;
+}
+
+.char.char-space-incorrect {
+  background: var(--color-incorrect);
+  color: var(--color-white);
+  border-bottom: 2px solid var(--color-black);
+}
+
+.char.char-current {
+  background: var(--color-primary);
+  color: var(--color-black);
+  outline: 2px solid var(--color-black);
+  box-shadow: var(--shadow-sm);
+  animation: pulse-caret 1s infinite;
+}
+
+@keyframes pulse-caret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+/* --------------------------------------------------------------------------
+   ON-SCREEN VIRTUAL KEYBOARD & HEATMAP
+   -------------------------------------------------------------------------- */
+.keyboard-card {
+  border: var(--border-heavy);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  padding: 0.75rem 1rem 0.85rem;
+}
+
+.kb-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.kb-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--color-black);
+}
+
+.virtual-kb {
+  border: var(--border-thick);
+  background: var(--color-surface-alt);
+  padding: 0.6rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  user-select: none;
+  overflow-x: auto;
+}
+
+.kb-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.kb-key {
+  height: 38px;
+  border: 2.5px solid var(--color-black);
+  background: var(--hm-untested);
+  box-shadow: 2px 2px 0px var(--color-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 0.82rem;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.05s, box-shadow 0.05s, background-color 0.1s;
+  padding: 0.1rem;
+}
+
+.kb-key:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--color-black);
+  z-index: 5;
+}
+
+.kb-key.key-pressed {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 0 0 0 transparent !important;
+  background-color: var(--hm-active) !important;
+  color: var(--color-black) !important;
+}
+
+.kb-key.key-feedback-correct {
+  background-color: var(--color-correct) !important;
+  color: var(--color-white) !important;
+  transform: translate(1px, 1px);
+}
+
+.kb-key.key-feedback-incorrect {
+  background-color: var(--color-incorrect) !important;
+  color: var(--color-white) !important;
+  transform: translate(1px, 1px);
+}
+
+/* Heatmap Classes */
+.kb-key.hm-untested { background-color: var(--hm-untested); color: var(--color-black); }
+.kb-key.hm-excellent { background-color: var(--hm-excellent); color: var(--color-white); }
+.kb-key.hm-low { background-color: var(--hm-low); color: var(--color-black); }
+.kb-key.hm-med { background-color: var(--hm-med); color: var(--color-black); }
+.kb-key.hm-high { background-color: var(--hm-high); color: var(--color-white); }
+.kb-key.hm-critical { background-color: var(--hm-critical); color: var(--color-white); }
+
+/* Key Tooltip */
+.key-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: var(--border-thick);
+  background: var(--color-black);
+  color: var(--color-white);
+  padding: 0.35rem 0.55rem;
+  font-family: var(--font-main);
+  font-size: 0.68rem;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-sm);
+  z-index: 50;
+  display: none;
+  text-align: center;
+}
+
+.kb-key:hover .key-tooltip {
+  display: block;
+}
+
 @media (max-width: 900px) {
   .focus-selector-grid {
     grid-template-columns: 1fr 1fr;

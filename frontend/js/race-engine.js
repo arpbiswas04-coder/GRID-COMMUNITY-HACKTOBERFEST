@@ -44,7 +44,11 @@ class RaceEngine {
   loadGhostSession() {
     const state = window.TypeEStorage.get();
     const duration = state.duration || 60;
-    const ghostRecord = window.TypeEStorage.getGhostForDuration(duration);
+    const isProgramming = (state.difficulty === "programming");
+
+    const ghostRecord = isProgramming
+      ? window.TypeEStorage.getProgrammingGhostForDuration(duration)
+      : window.TypeEStorage.getGhostForDuration(duration);
 
     if (ghostRecord && ghostRecord.timeline && ghostRecord.timeline.length > 0) {
       this.hasGhost = true;
@@ -223,7 +227,11 @@ class RaceEngine {
   onRaceComplete(timeline, finalWPM, accuracy, correctChars, incorrectChars, elapsedSec) {
     const state = window.TypeEStorage.get();
     const duration = state.duration || 60;
-    const ghostRecord = window.TypeEStorage.getGhostForDuration(duration);
+    const isProgramming = (state.difficulty === "programming");
+
+    const ghostRecord = isProgramming
+      ? window.TypeEStorage.getProgrammingGhostForDuration(duration)
+      : window.TypeEStorage.getGhostForDuration(duration);
 
     let playerWon = false;
     let message = "";
@@ -232,18 +240,26 @@ class RaceEngine {
     // A. FIRST-EVER RACE (No previous ghost for this duration)
     if (!this.hasGhost || !ghostRecord) {
       playerWon = true; // Recorded as a successful benchmark run
-      message = "🏁 FIRST SPRINT COMPLETE — GHOST RECORD ESTABLISHED!";
+      message = isProgramming
+        ? "💻 FIRST PROGRAMMING SPRINT — GHOST RECORD ESTABLISHED!"
+        : "🏁 FIRST SPRINT COMPLETE — GHOST RECORD ESTABLISHED!";
       outcomeClass = "winner-solo";
 
       // Save initial personal best ghost for this duration
-      window.TypeEStorage.saveGhostForDuration(duration, {
+      const ghostData = {
         timeline: timeline,
         wpm: finalWPM,
         duration: duration,
         accuracy: accuracy,
         progress: this.playerProgress,
         date: new Date().toISOString()
-      });
+      };
+
+      if (isProgramming) {
+        window.TypeEStorage.saveProgrammingGhostForDuration(duration, ghostData);
+      } else {
+        window.TypeEStorage.saveGhostForDuration(duration, ghostData);
+      }
     } else {
       // Comparison logic: Compare track progress and time outcomes consistently
       const progressDiff = this.playerProgress - this.ghostProgress;
@@ -265,54 +281,97 @@ class RaceEngine {
         const isNewPB = (finalWPM > (ghostRecord.wpm || 0)) && (accuracy >= 80);
 
         if (isNewPB) {
-          message = "🏆 NEW PERSONAL BEST! YOU OUTPACED YOUR GHOST!";
+          message = isProgramming
+            ? "🏆 NEW PROGRAMMING PERSONAL BEST! OUTPACED YOUR GHOST!"
+            : "🏆 NEW PERSONAL BEST! YOU OUTPACED YOUR GHOST!";
           outcomeClass = "winner-pb";
 
           // Save new PB timeline only when actual personal-best criteria are met
-          window.TypeEStorage.saveGhostForDuration(duration, {
+          const pbData = {
             timeline: timeline,
             wpm: finalWPM,
             duration: duration,
             accuracy: accuracy,
             progress: this.playerProgress,
             date: new Date().toISOString()
-          });
+          };
+
+          if (isProgramming) {
+            window.TypeEStorage.saveProgrammingGhostForDuration(duration, pbData);
+          } else {
+            window.TypeEStorage.saveGhostForDuration(duration, pbData);
+          }
         } else {
           message = "⚡ VICTORY! YOU FINISHED AHEAD ON THE CIRCUIT!";
         }
       } else {
         // C. PLAYER LOSES TO THE GHOST: Ghost finished ahead on track
-        // Never declare victory simply because WPM is higher when player is behind
         playerWon = false;
-        message = "⚠️ GHOST HELD THE LEAD! KEEP TRAINING TO BEAT YOUR PB!";
+        message = isProgramming
+          ? "⚠️ PROGRAMMING GHOST HELD THE LEAD! KEEP DRILLING CODE!"
+          : "⚠️ GHOST HELD THE LEAD! KEEP TRAINING TO BEAT YOUR PB!";
         outcomeClass = "winner-ghost";
       }
     }
 
-    // Update Personal Bests
-    const pb = state.personalBests;
-    if (finalWPM > pb.highestWPM) pb.highestWPM = finalWPM;
-    if (accuracy > pb.bestAccuracy && finalWPM > 20) pb.bestAccuracy = accuracy;
-    if (state.duration === 30 && finalWPM > pb.best30s) pb.best30s = finalWPM;
-    if (state.duration === 60 && finalWPM > pb.best60s) pb.best60s = finalWPM;
-    if (state.duration === 120 && finalWPM > pb.best120s) pb.best120s = finalWPM;
-    pb.totalTests++;
-    pb.totalCharsTyped += (correctChars + incorrectChars);
+    if (isProgramming) {
+      // Update Programming Personal Bests
+      const ppb = state.programmingPersonalBests || { highestWPM: 0, bestAccuracy: 0, best30s: 0, best60s: 0, best120s: 0, totalTests: 0, totalCharsTyped: 0 };
+      if (finalWPM > ppb.highestWPM) ppb.highestWPM = finalWPM;
+      if (accuracy > ppb.bestAccuracy && finalWPM > 20) ppb.bestAccuracy = accuracy;
+      if (state.duration === 30 && finalWPM > ppb.best30s) ppb.best30s = finalWPM;
+      if (state.duration === 60 && finalWPM > ppb.best60s) ppb.best60s = finalWPM;
+      if (state.duration === 120 && finalWPM > ppb.best120s) ppb.best120s = finalWPM;
+      ppb.totalTests++;
+      ppb.totalCharsTyped += (correctChars + incorrectChars);
+      state.programmingPersonalBests = ppb;
 
-    // Save Sprint Archive Record
-    state.testHistory.unshift({
-      id: "TE-" + Date.now().toString(36),
-      timestamp: Date.now(),
-      dateStr: new Date().toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }),
-      wpm: finalWPM,
-      accuracy: accuracy,
-      duration: state.duration,
-      difficulty: state.difficulty,
-      correctChars: correctChars,
-      incorrectChars: incorrectChars,
-      wonRace: playerWon
-    });
-    if (state.testHistory.length > 60) state.testHistory.pop();
+      // Save Programming History Archive Record
+      const lang = (state.programmingLanguage || "javascript").toUpperCase();
+      const diff = (state.programmingDifficulty || "intermediate").toUpperCase();
+
+      if (!Array.isArray(state.programmingHistory)) state.programmingHistory = [];
+      state.programmingHistory.unshift({
+        id: "PROG-" + Date.now().toString(36),
+        timestamp: Date.now(),
+        dateStr: new Date().toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }),
+        language: lang,
+        difficulty: diff,
+        wpm: finalWPM,
+        accuracy: accuracy,
+        duration: state.duration,
+        correctChars: correctChars,
+        incorrectChars: incorrectChars,
+        wonRace: playerWon,
+        outcome: message
+      });
+      if (state.programmingHistory.length > 60) state.programmingHistory.pop();
+    } else {
+      // Update Normal Personal Bests
+      const pb = state.personalBests;
+      if (finalWPM > pb.highestWPM) pb.highestWPM = finalWPM;
+      if (accuracy > pb.bestAccuracy && finalWPM > 20) pb.bestAccuracy = accuracy;
+      if (state.duration === 30 && finalWPM > pb.best30s) pb.best30s = finalWPM;
+      if (state.duration === 60 && finalWPM > pb.best60s) pb.best60s = finalWPM;
+      if (state.duration === 120 && finalWPM > pb.best120s) pb.best120s = finalWPM;
+      pb.totalTests++;
+      pb.totalCharsTyped += (correctChars + incorrectChars);
+
+      // Save Normal Sprint Archive Record
+      state.testHistory.unshift({
+        id: "TE-" + Date.now().toString(36),
+        timestamp: Date.now(),
+        dateStr: new Date().toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }),
+        wpm: finalWPM,
+        accuracy: accuracy,
+        duration: state.duration,
+        difficulty: state.difficulty,
+        correctChars: correctChars,
+        incorrectChars: incorrectChars,
+        wonRace: playerWon
+      });
+      if (state.testHistory.length > 60) state.testHistory.pop();
+    }
 
     window.TypeEStorage.save();
 
@@ -320,14 +379,39 @@ class RaceEngine {
       window.TypeESettings.synth.playFinish(playerWon);
     }
 
-    this.showResultsModal(message, outcomeClass, finalWPM, accuracy, elapsedSec, correctChars, incorrectChars);
+    this.showResultsModal(message, outcomeClass, finalWPM, accuracy, elapsedSec, correctChars, incorrectChars, isProgramming);
   }
 
-  showResultsModal(message, outcomeClass, wpm, acc, time, correct, errors) {
+  showResultsModal(message, outcomeClass, wpm, acc, time, correct, errors, isProgramming = false) {
     const banner = document.querySelector("#race-winner-banner");
     if (banner) {
       banner.className = `race-outcome-banner ${outcomeClass}`;
       banner.textContent = message;
+    }
+
+    const state = window.TypeEStorage.get();
+    const titleEl = document.querySelector("#modal-title-text");
+    const metaBox = document.querySelector("#prog-modal-meta");
+    const langBadge = document.querySelector("#prog-modal-lang");
+    const diffBadge = document.querySelector("#prog-modal-diff");
+    const analyticsBtn = document.querySelector("#btn-results-analytics");
+
+    if (isProgramming) {
+      if (titleEl) titleEl.textContent = "💻 PROGRAMMING SPRINT RESULTS";
+      if (metaBox) metaBox.style.display = "flex";
+      if (langBadge) langBadge.textContent = (state.programmingLanguage || "javascript").toUpperCase();
+      if (diffBadge) diffBadge.textContent = (state.programmingDifficulty || "intermediate").toUpperCase();
+      if (analyticsBtn) {
+        analyticsBtn.textContent = "📊 View Programming Analytics";
+        analyticsBtn.onclick = () => { window.location.href = "analytics.html#programming-section"; };
+      }
+    } else {
+      if (titleEl) titleEl.textContent = "🏁 SPRINT RESULTS";
+      if (metaBox) metaBox.style.display = "none";
+      if (analyticsBtn) {
+        analyticsBtn.textContent = "📊 View Analytics";
+        analyticsBtn.onclick = () => { window.location.href = "analytics.html"; };
+      }
     }
 
     const setTxt = (id, val) => {

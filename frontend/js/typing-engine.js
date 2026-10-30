@@ -87,6 +87,174 @@ const PASSAGES = {
   ]
 };
 
+// ==========================================================================
+// AUTHENTIC PROGRAMMING PASSAGE LIBRARY
+// Covering Python, JavaScript, C, C++, HTML, CSS, SQL across Beginner, Intermediate & Advanced
+// ==========================================================================
+const PROGRAMMING_PASSAGES = {
+  javascript: {
+    beginner: [
+      'const userName = "Alice"; let score = 42; if (score >= 40) { console.log(`Winner: ${userName}`); }',
+      'const fruits = ["apple", "banana", "orange"]; fruits.forEach((item, index) => { console.log(index + ": " + item); });',
+      'function calculateArea(width, height) { return (width > 0 && height > 0) ? width * height : 0; }',
+      'const user = { id: 101, role: "admin", active: true }; if (user.active && user.role === "admin") { grantAccess(); }',
+      'let count = 0; while (count < 5) { count++; console.log("Iteration #" + count); }'
+    ],
+    intermediate: [
+      'async function fetchUserData(userId) { try { const res = await fetch(`/api/users/${userId}`); if (!res.ok) throw new Error("HTTP " + res.status); return await res.json(); } catch (err) { console.error("Fetch failed:", err.message); return null; } }',
+      'const debounce = (fn, delay = 300) => { let timer; return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), delay); }; };',
+      'const processScores = (students) => { return students.filter(s => s.grade >= 75).map(s => ({ name: s.name, pct: (s.score / 100).toFixed(1) })).sort((a, b) => b.pct - a.pct); };',
+      'class EventEmitter { constructor() { this.events = {}; } on(event, listener) { (this.events[event] = this.events[event] || []).push(listener); } emit(event, ...args) { (this.events[event] || []).forEach(fn => fn(...args)); } }',
+      'const mergeObjects = (target, source) => { return Object.assign({}, target, source, { updatedAt: Date.now() }); };'
+    ],
+    advanced: [
+      'function topologicalSort(numCourses, prerequisites) { const inDegree = new Array(numCourses).fill(0); const adj = new Map(); for (const [dest, src] of prerequisites) { if (!adj.has(src)) adj.set(src, []); adj.get(src).push(dest); inDegree[dest]++; } const queue = []; for (let i = 0; i < numCourses; i++) { if (inDegree[i] === 0) queue.push(i); } while (queue.length > 0) { const curr = queue.shift(); for (const next of (adj.get(curr) || [])) { if (--inDegree[next] === 0) queue.push(next); } } return inDegree.every(d => d === 0); }',
+      'const deepClone = (obj, hash = new WeakMap()) => { if (Object(obj) !== obj || obj instanceof Function) return obj; if (hash.has(obj)) return hash.get(obj); const result = Array.isArray(obj) ? [] : Object.create(Object.getPrototypeOf(obj)); hash.set(obj, result); return Object.assign(result, ...Object.keys(obj).map(k => ({ [k]: deepClone(obj[k], hash) }))); };',
+      'class LRUCache { constructor(capacity) { this.capacity = capacity; this.cache = new Map(); } get(key) { if (!this.cache.has(key)) return -1; const val = this.cache.get(key); this.cache.delete(key); this.cache.set(key, val); return val; } put(key, value) { this.cache.delete(key); if (this.cache.size >= this.capacity) { const oldest = this.cache.keys().next().value; this.cache.delete(oldest); } this.cache.set(key, value); } }',
+      'const memoize = (fn) => { const cache = new Map(); return (...args) => { const key = JSON.stringify(args); if (cache.has(key)) return cache.get(key); const result = fn(...args); cache.set(key, result); return result; }; };',
+      'function promiseAllSettled(promises) { return Promise.all(promises.map(p => Promise.resolve(p).then(val => ({ status: "fulfilled", value: val }), err => ({ status: "rejected", reason: err })))); }'
+    ]
+  },
+  python: {
+    beginner: [
+      'total = 0\nfor number in range(1, 11):\n    if number % 2 == 0:\n        total += number\nprint(f"Sum of evens: {total}")',
+      'def greet_user(name, title="Guest"):\n    clean_name = name.strip().title()\n    return f"Welcome, {title} {clean_name}!"',
+      'user_profiles = {"id": 42, "username": "codemaster", "is_active": True}\nif user_profiles.get("is_active"):\n    print(f"Logged in as {user_profiles[\'username\']}")',
+      'temperatures = [68, 72, 75, 71, 69, 74]\naverage_temp = sum(temperatures) / len(temperatures)\nprint(f"Average: {average_temp:.2f} deg")',
+      'colors = ["red", "green", "blue"]\nfor idx, col in enumerate(colors):\n    print(f"{idx + 1}: {col.upper()}")'
+    ],
+    intermediate: [
+      'def find_primes(n):\n    is_prime = [True] * (n + 1)\n    is_prime[0] = is_prime[1] = False\n    for p in range(2, int(n ** 0.5) + 1):\n        if is_prime[p]:\n            for i in range(p * p, n + 1, p):\n                is_prime[i] = False\n    return [i for i in range(n + 1) if is_prime[i]]',
+      'import json\nfrom pathlib import Path\ndef load_config(filepath):\n    path = Path(filepath)\n    if not path.exists():\n        raise FileNotFoundError(f"Missing config: {path}")\n    with path.open("r", encoding="utf-8") as f:\n        return json.load(f)',
+      'class BankAccount:\n    def __init__(self, owner, balance=0.0):\n        self.owner = owner\n        self._balance = max(0.0, balance)\n    def deposit(self, amount):\n        if amount <= 0:\n            raise ValueError("Deposit must be positive")\n        self._balance += amount\n        return self._balance',
+      'words = ["apple", "banana", "cherry", "avocado", "blueberry"]\ngrouped = {}\nfor word in words:\n    key = word[0]\n    grouped.setdefault(key, []).append(word)',
+      'squares = [x ** 2 for x in range(20) if x % 3 == 0]\nprint(f"Computed squares: {squares}")'
+    ],
+    advanced: [
+      'import heapq\ndef dijkstra(graph, start):\n    distances = {node: float("inf") for node in graph}\n    distances[start] = 0\n    pq = [(0, start)]\n    while pq:\n        curr_dist, u = heapq.heappop(pq)\n        if curr_dist > distances[u]:\n            continue\n        for v, weight in graph[u].items():\n            distance = curr_dist + weight\n            if distance < distances[v]:\n                distances[v] = distance\n                heapq.heappush(pq, (distance, v))\n    return distances',
+      'def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    pivot = arr[len(arr) // 2]\n    left = [x for x in arr if x < pivot]\n    mid = [x for x in arr if x == pivot]\n    right = [x for x in arr if x > pivot]\n    return quicksort(left) + mid + quicksort(right)',
+      'from functools import wraps\nimport time\ndef timing_decorator(fn):\n    @wraps(fn)\n    def wrapper(*args, **kwargs):\n        start = time.perf_counter()\n        result = fn(*args, **kwargs)\n        elapsed = time.perf_counter() - start\n        print(f"[{fn.__name__}] took {elapsed * 1000:.3f} ms")\n        return result\n    return wrapper',
+      'class Node:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\ndef invert_tree(root):\n    if not root:\n        return None\n    root.left, root.right = invert_tree(root.right), invert_tree(root.left)\n    return root',
+      'import asyncio\nasync def worker(queue, worker_id):\n    while not queue.empty():\n        task = await queue.get()\n        print(f"Worker {worker_id} processing {task}")\n        await asyncio.sleep(0.05)\n        queue.task_done()'
+    ]
+  },
+  c: {
+    beginner: [
+      '#include <stdio.h>\nint main(void) {\n    int count = 10;\n    float rate = 3.14f;\n    printf("Count: %d, Rate: %.2f\\n", count, rate);\n    return 0;\n}',
+      'int sum_array(const int arr[], int len) {\n    int total = 0;\n    for (int i = 0; i < len; i++) {\n        total += arr[i];\n    }\n    return total;\n}',
+      'int max_value(int a, int b) {\n    if (a > b) return a;\n    else return b;\n}',
+      'char greeting[] = "Hello, C programmer!";\nfor (int i = 0; greeting[i] != \'\\0\'; i++) {\n    if (greeting[i] >= \'a\' && greeting[i] <= \'z\') greeting[i] -= 32;\n}',
+      'int is_palindrome(int n) {\n    int rev = 0, orig = n;\n    while (n > 0) { rev = rev * 10 + n % 10; n /= 10; }\n    return (orig == rev);\n}'
+    ],
+    intermediate: [
+      '#include <stdlib.h>\nint* create_buffer(size_t n) {\n    int* buf = (int*)malloc(n * sizeof(int));\n    if (!buf) return NULL;\n    for (size_t i = 0; i < n; i++) {\n        buf[i] = (int)(i * 2);\n    }\n    return buf;\n}',
+      'typedef struct {\n    int id;\n    char name[32];\n    double score;\n} Student;\nvoid print_student(const Student* s) {\n    printf("Student #%d: %s (%.1f)\\n", s->id, s->name, s->score);\n}',
+      'void swap(int* x, int* y) {\n    int temp = *x;\n    *x = *y;\n    *y = temp;\n}\nvoid reverse_array(int arr[], int n) {\n    for (int i = 0; i < n / 2; i++) swap(&arr[i], &arr[n - 1 - i]);\n}',
+      'int binary_search(const int arr[], int n, int target) {\n    int low = 0, high = n - 1;\n    while (low <= high) {\n        int mid = low + (high - low) / 2;\n        if (arr[mid] == target) return mid;\n        if (arr[mid] < target) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1;\n}',
+      'size_t string_length(const char* str) {\n    const char* ptr = str;\n    while (*ptr) ptr++;\n    return (size_t)(ptr - str);\n}'
+    ],
+    advanced: [
+      'typedef struct ListNode {\n    int val;\n    struct ListNode* next;\n} ListNode;\nListNode* reverse_list(ListNode* head) {\n    ListNode *prev = NULL, *curr = head;\n    while (curr) {\n        ListNode* next_temp = curr->next;\n        curr->next = prev;\n        prev = curr;\n        curr = next_temp;\n    }\n    return prev;\n}',
+      'void merge(int arr[], int l, int m, int r) {\n    int n1 = m - l + 1, n2 = r - m;\n    int L[n1], R[n2];\n    for (int i = 0; i < n1; i++) L[i] = arr[l + i];\n    for (int j = 0; j < n2; j++) R[j] = arr[m + 1 + j];\n    int i = 0, j = 0, k = l;\n    while (i < n1 && j < n2) arr[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];\n    while (i < n1) arr[k++] = L[i++];\n    while (j < n2) arr[k++] = R[j++];\n}',
+      'unsigned int hash_djb2(const unsigned char *str) {\n    unsigned long hash = 5381;\n    int c;\n    while ((c = *str++)) hash = ((hash << 5) + hash) + c;\n    return (unsigned int)(hash % 10007);\n}',
+      'typedef struct RingBuffer {\n    int *buffer;\n    size_t head;\n    size_t tail;\n    size_t max;\n    int full;\n} RingBuffer;\nint ring_push(RingBuffer *rb, int data) {\n    rb->buffer[rb->head] = data;\n    if (rb->full) rb->tail = (rb->tail + 1) % rb->max;\n    rb->head = (rb->head + 1) % rb->max;\n    rb->full = (rb->head == rb->tail);\n    return 0;\n}',
+      '#include <pthread.h>\npthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;\nint shared_counter = 0;\nvoid* increment(void* arg) {\n    pthread_mutex_lock(&lock);\n    shared_counter++;\n    pthread_mutex_unlock(&lock);\n    return NULL;\n}'
+    ]
+  },
+  cpp: {
+    beginner: [
+      '#include <iostream>\n#include <string>\nint main() {\n    std::string title = "Type.e Racer";\n    int laps = 3;\n    std::cout << title << " | Laps: " << laps << std::endl;\n    return 0;\n}',
+      'std::vector<int> numbers = {10, 20, 30, 40, 50};\nfor (const auto& num : numbers) {\n    if (num > 25) std::cout << "Value: " << num << "\\n";\n}',
+      'int add_integers(int a, int b) {\n    return a + b;\n}\nbool is_even(int x) {\n    return (x % 2 == 0);\n}',
+      'std::string format_player(const std::string& name, int rank) {\n    return "#" + std::to_string(rank) + " " + name;\n}',
+      'int total = 0;\nfor (int i = 1; i <= 100; ++i) {\n    if (i % 5 == 0) total += i;\n}'
+    ],
+    intermediate: [
+      'template<typename T>\nT clamp_val(T val, T min_v, T max_v) {\n    if (val < min_v) return min_v;\n    if (val > max_v) return max_v;\n    return val;\n}',
+      '#include <algorithm>\n#include <vector>\nvoid filter_and_sort(std::vector<int>& vec) {\n    vec.erase(std::remove_if(vec.begin(), vec.end(), [](int n) { return n < 0; }), vec.end());\n    std::sort(vec.begin(), vec.end(), std::greater<int>());\n}',
+      'class Vector2D {\npublic:\n    double x, y;\n    Vector2D(double x_ = 0, double y_ = 0) : x(x_), y(y_) {}\n    Vector2D operator+(const Vector2D& o) const { return Vector2D(x + o.x, y + o.y); }\n    double dot(const Vector2D& o) const { return x * o.x + y * o.y; }\n};',
+      '#include <unordered_map>\nstd::unordered_map<std::string, int> count_frequencies(const std::vector<std::string>& words) {\n    std::unordered_map<std::string, int> freq;\n    for (const auto& w : words) freq[w]++;\n    return freq;\n}',
+      'auto is_prime = [](int n) -> bool {\n    if (n <= 1) return false;\n    for (int i = 2; i * i <= n; ++i) if (n % i == 0) return false;\n    return true;\n};'
+    ],
+    advanced: [
+      '#include <memory>\nclass CircuitNode {\npublic:\n    int id;\n    std::shared_ptr<CircuitNode> next;\n    CircuitNode(int id_) : id(id_), next(nullptr) {}\n    void connect(std::shared_ptr<CircuitNode> target) {\n        this->next = std::move(target);\n    }\n};',
+      '#include <future>\n#include <thread>\nauto async_sum(const std::vector<int>& data) {\n    return std::async(std::launch::async, [&data]() {\n        long long sum = 0;\n        for (int v : data) sum += v;\n        return sum;\n    });\n}',
+      'template<typename T, size_t N>\nclass FixedQueue {\n    T data[N];\n    size_t head = 0, tail = 0, count = 0;\npublic:\n    bool push(const T& item) {\n        if (count == N) return false;\n        data[tail] = item;\n        tail = (tail + 1) % N;\n        count++;\n        return true;\n    }\n};',
+      'int max_subarray(const std::vector<int>& nums) {\n    int max_sum = nums[0], curr_sum = nums[0];\n    for (size_t i = 1; i < nums.size(); ++i) {\n        curr_sum = std::max(nums[i], curr_sum + nums[i]);\n        max_sum = std::max(max_sum, curr_sum);\n    }\n    return max_sum;\n}',
+      'template<typename... Args>\nvoid print_all(Args&&... args) {\n    (std::cout << ... << std::forward<Args>(args)) << "\\n";\n}'
+    ]
+  },
+  html: {
+    beginner: [
+      '<div class="profile-card">\n  <h2 class="user-title">Alex Johnson</h2>\n  <p class="user-bio">Frontend engineer &amp; UI enthusiast.</p>\n  <button type="button" class="btn-primary">Follow</button>\n</div>',
+      '<nav class="navbar">\n  <a href="/" class="brand-link">SpeedRacer</a>\n  <ul class="nav-links">\n    <li><a href="#arena">Arena</a></li>\n    <li><a href="#stats">Telemetry</a></li>\n  </ul>\n</nav>',
+      '<form action="/submit" method="POST">\n  <label for="email-input">Email Address</label>\n  <input type="email" id="email-input" name="email" required />\n  <button type="submit">Subscribe</button>\n</form>',
+      '<table class="scores-table">\n  <thead>\n    <tr><th>Rank</th><th>Player</th><th>WPM</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>1</td><td>Cipher</td><td>114</td></tr>\n  </tbody>\n</table>',
+      '<header class="site-header">\n  <h1 class="logo-text">TYPE.<span class="brand-accent">E</span></h1>\n  <p class="tagline">Type Smarter. Improve Faster.</p>\n</header>'
+    ],
+    intermediate: [
+      '<section class="telemetry-panel" id="telemetry" aria-label="Live Telemetry">\n  <header class="panel-header">\n    <h3>HUD METRICS</h3>\n    <span class="badge badge-success">ACTIVE</span>\n  </header>\n  <div class="metrics-grid">\n    <div class="metric-item">\n      <span class="label">SPEED</span>\n      <strong class="val" data-unit="wpm">88</strong>\n    </div>\n  </div>\n</section>',
+      '<dialog id="race-modal" class="modal-dialog" aria-modal="true">\n  <div class="modal-content">\n    <h2 class="modal-title">Race Complete</h2>\n    <p id="winner-text">Player outpaced the personal best ghost!</p>\n    <button type="button" id="close-modal-btn">Continue</button>\n  </div>\n</dialog>',
+      '<article class="article-preview" data-article-id="art-204">\n  <figure class="thumbnail-wrapper">\n    <img src="/assets/hero.webp" alt="Speed track at dusk" loading="lazy" />\n    <figcaption>Turn 4 - Apex Corner</figcaption>\n  </figure>\n  <div class="article-body">\n    <h2>Mastering Finger Dexterity</h2>\n  </div>\n</article>',
+      '<fieldset class="config-fieldset">\n  <legend>Select Duration</legend>\n  <label class="radio-label">\n    <input type="radio" name="race_duration" value="30" />\n    <span>30 Seconds (Sprint)</span>\n  </label>\n  <label class="radio-label">\n    <input type="radio" name="race_duration" value="60" checked />\n    <span>60 Seconds (Circuit)</span>\n  </label>\n</fieldset>',
+      '<div class="progress-bar-wrapper" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">\n  <div class="progress-fill" style="width: 75%;"></div>\n  <span class="sr-only">75% Complete</span>\n</div>'
+    ],
+    advanced: [
+      '<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" class="circuit-canvas">\n  <defs>\n    <linearGradient id="trackGrad" x1="0%" y1="0%" x2="100%" y2="0%">\n      <stop offset="0%" stop-color="#171717" />\n      <stop offset="100%" stop-color="#333333" />\n    </linearGradient>\n  </defs>\n  <path d="M 50,200 C 150,50 350,50 450,200 S 750,350 750,200" fill="none" stroke="url(#trackGrad)" stroke-width="24" stroke-linecap="round" />\n</svg>',
+      '<main class="app-layout" role="main">\n  <aside class="sidebar-telemetry" aria-label="Controls">\n    <nav class="sub-nav">\n      <a href="#settings" aria-current="page">General</a>\n    </nav>\n  </aside>\n  <div class="stage-viewport" tabindex="-1" role="region">\n    <canvas id="stage-canvas" width="1280" height="720" aria-label="Interactive simulation"></canvas>\n  </div>\n</main>',
+      '<template id="card-template">\n  <li class="result-card">\n    <div class="result-header">\n      <span class="user-slot"></span>\n      <span class="badge status-pill"></span>\n    </div>\n    <div class="speed-bar"><div class="fill-bar"></div></div>\n  </li>\n</template>',
+      '<details class="faq-item" open>\n  <summary class="faq-trigger">\n    <span>How is Net WPM calculated?</span>\n    <span class="icon-toggle" aria-hidden="true">&plus;</span>\n  </summary>\n  <div class="faq-content">\n    <p>Net WPM = ((Total Characters / 5) - Uncorrected Errors) / Minutes Elapsed.</p>\n  </div>\n</details>',
+      '<form id="form-upload" enctype="multipart/form-data" novalidate>\n  <input type="file" id="file-picker" accept=".json,.csv" multiple hidden />\n  <div id="drop-zone" tabindex="0" role="button">Drag &amp; drop session data here</div>\n</form>'
+    ]
+  },
+  css: {
+    beginner: [
+      '.container {\n  max-width: 1200px;\n  margin: 0 auto;\n  padding: 1rem 1.5rem;\n  box-sizing: border-box;\n}',
+      '.btn-primary {\n  background-color: #FFE600;\n  color: #171717;\n  border: 3px solid #171717;\n  box-shadow: 4px 4px 0px #171717;\n  font-weight: 900;\n  cursor: pointer;\n}',
+      '.card-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  border-bottom: 2px solid #000;\n  padding-bottom: 0.5rem;\n}',
+      '.text-highlight {\n  font-family: \'JetBrains Mono\', monospace;\n  color: #32B366;\n  font-weight: 800;\n  text-decoration: underline;\n}',
+      '.avatar-circle {\n  width: 48px;\n  height: 48px;\n  border-radius: 50%;\n  border: 2px solid #171717;\n  object-fit: cover;\n}'
+    ],
+    intermediate: [
+      '@media (max-width: 768px) {\n  .grid-layout {\n    grid-template-columns: 1fr;\n    gap: 1rem;\n  }\n  .nav-bar {\n    flex-direction: column;\n    align-items: stretch;\n  }\n}',
+      '.keyboard-key {\n  flex: 1;\n  height: 42px;\n  background: #EAE5D9;\n  border: 2px solid #171717;\n  box-shadow: 2px 2px 0px #171717;\n  transition: transform 0.08s ease, background-color 0.1s ease;\n}\n.keyboard-key:active {\n  transform: translate(2px, 2px);\n  box-shadow: 0 0 0 transparent;\n}',
+      '.progress-track {\n  position: relative;\n  width: 100%;\n  height: 12px;\n  background: #FAF7F0;\n  border: 2px solid #171717;\n  overflow: hidden;\n}\n.progress-fill {\n  height: 100%;\n  background: linear-gradient(90deg, #FFE600, #00D2FF);\n  transition: width 0.15s cubic-bezier(0.16, 1, 0.3, 1);\n}',
+      '.modal-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(23, 23, 23, 0.65);\n  backdrop-filter: blur(4px);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000;\n}',
+      '.badge-status {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  padding: 0.2rem 0.5rem;\n  font-size: 0.75rem;\n  font-weight: 800;\n  text-transform: uppercase;\n}'
+    ],
+    advanced: [
+      '@keyframes pulse-glow {\n  0%, 100% {\n    box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7);\n    transform: scale(1);\n  }\n  50% {\n    box-shadow: 0 0 0 10px rgba(0, 210, 255, 0);\n    transform: scale(1.02);\n  }\n}',
+      '.hud-container {\n  display: grid;\n  grid-template-columns: minmax(240px, 1fr) repeat(2, minmax(180px, 2fr));\n  grid-auto-rows: min-content;\n  gap: clamp(0.75rem, 1.5vw, 1.5rem);\n  align-items: start;\n}',
+      '.glass-neo {\n  background: rgba(255, 255, 255, 0.85);\n  backdrop-filter: blur(8px) saturate(180%);\n  border: 3px solid #171717;\n  box-shadow: 6px 6px 0px rgba(23, 23, 23, 1);\n  contain: content;\n}',
+      ':is(.card, .panel):has(> input:focus-visible) {\n  outline: 3px dashed #FF3366;\n  outline-offset: 4px;\n  border-color: #171717;\n}',
+      '.container-query-card {\n  container-type: inline-size;\n}\n@container (min-width: 480px) {\n  .card-inner { display: flex; flex-direction: row; }\n}'
+    ]
+  },
+  sql: {
+    beginner: [
+      'SELECT id, username, email FROM users WHERE is_active = 1 ORDER BY created_at DESC LIMIT 10;',
+      'INSERT INTO race_results (player_id, wpm, accuracy, duration) VALUES (42, 85.5, 98.2, 60);',
+      'UPDATE racers SET highest_wpm = 94 WHERE racer_id = 101 AND highest_wpm < 94;',
+      'DELETE FROM temporary_sessions WHERE expires_at < CURRENT_TIMESTAMP;',
+      'SELECT COUNT(*) AS total_sprints FROM race_history WHERE duration = 60 AND wpm >= 70;'
+    ],
+    intermediate: [
+      'SELECT u.username, COUNT(r.id) AS total_races, AVG(r.wpm) AS avg_speed, MAX(r.wpm) AS top_speed FROM users u INNER JOIN races r ON u.id = r.user_id WHERE r.accuracy >= 90 GROUP BY u.id, u.username HAVING COUNT(r.id) >= 5 ORDER BY top_speed DESC;',
+      'SELECT r.id, r.wpm, r.created_at, RANK() OVER (ORDER BY r.wpm DESC) AS speed_rank FROM race_archives r WHERE r.duration = 60;',
+      'CREATE TABLE sprint_records (\n  session_id VARCHAR(36) PRIMARY KEY,\n  player_name VARCHAR(64) NOT NULL,\n  wpm DECIMAL(5, 2) NOT NULL CHECK (wpm >= 0),\n  accuracy DECIMAL(5, 2) NOT NULL CHECK (accuracy BETWEEN 0 AND 100),\n  race_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);',
+      'SELECT player_id, wpm, duration FROM race_history WHERE (duration, wpm) IN (SELECT duration, MAX(wpm) FROM race_history GROUP BY duration);',
+      'SELECT DATE(created_at) AS sprint_day, COUNT(*) AS races_run, ROUND(AVG(wpm), 1) AS daily_avg FROM race_logs GROUP BY DATE(created_at) ORDER BY sprint_day DESC;'
+    ],
+    advanced: [
+      'WITH RankedRaces AS (\n  SELECT user_id, wpm, accuracy, race_time,\n    ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY wpm DESC, accuracy DESC) as rn\n  FROM race_sessions\n  WHERE race_time >= NOW() - INTERVAL \'30 days\'\n)\nSELECT u.username, rr.wpm, rr.accuracy\nFROM RankedRaces rr\nJOIN users u ON u.id = rr.user_id\nWHERE rr.rn = 1\nORDER BY rr.wpm DESC;',
+      'EXPLAIN ANALYZE\nSELECT p.id, p.name, COALESCE(SUM(s.score), 0) AS total_points\nFROM players p\nLEFT JOIN scores s ON p.id = s.player_id AND s.created_at >= \'2026-01-01\'\nGROUP BY p.id, p.name\nORDER BY total_points DESC\nLIMIT 25;',
+      'CREATE INDEX idx_races_user_duration_wpm ON race_records (user_id, duration, wpm DESC);\nSELECT * FROM race_records WHERE user_id = 458 AND duration = 60 ORDER BY wpm DESC LIMIT 5;',
+      'MERGE INTO player_stats AS target\nUSING (SELECT 101 AS player_id, 92 AS new_wpm) AS src\nON target.player_id = src.player_id\nWHEN MATCHED AND src.new_wpm > target.peak_wpm THEN\n  UPDATE SET target.peak_wpm = src.new_wpm, target.updated_at = CURRENT_TIMESTAMP\nWHEN NOT MATCHED THEN\n  INSERT (player_id, peak_wpm) VALUES (src.player_id, src.new_wpm);',
+      'SELECT id, wpm, LAG(wpm, 1) OVER (ORDER BY id) AS prev_wpm, wpm - LAG(wpm, 1) OVER (ORDER BY id) AS wpm_diff FROM race_sessions ORDER BY id;'
+    ]
+  }
+};
+
 class TypingEngine {
   constructor() {
     this.status = "READY"; // 'READY' | 'RUNNING' | 'FINISHED'
@@ -107,6 +275,10 @@ class TypingEngine {
     this.displayEl = null;
     this.lastInputLength = 0;
     this.lastPassageIndices = { easy: -1, medium: -1, hard: -1 };
+    this.lastProgIndices = {};
+    this.lastRandomProgLang = null;
+    this.activeProgrammingLanguage = null;
+    this.activeProgrammingDifficulty = null;
   }
 
   init(inputSelector = "#typing-input", displaySelector = "#passage-display") {
@@ -142,11 +314,41 @@ class TypingEngine {
     this.liveAccuracy = 100;
     this.lastInputLength = 0;
 
-    // Choice logic: Default prompts always pick predefined; Custom text picks custom
+    // Choice logic: Custom text takes precedence if chosen
     if (customText) {
       this.passageText = customText.trim();
+      this.activeProgrammingLanguage = null;
     } else if (state.promptChoice === "custom" && state.customPassage && state.customPassage.trim().length > 0) {
       this.passageText = state.customPassage.trim();
+      this.activeProgrammingLanguage = null;
+    } else if (state.difficulty === "programming") {
+      // Dedicated Programming Mode passage generation
+      let lang = (state.programmingLanguage || "javascript").toLowerCase();
+      const validLangs = ["javascript", "python", "c", "cpp", "html", "css", "sql"];
+
+      if (lang === "random" || !validLangs.includes(lang)) {
+        let pool = validLangs;
+        if (this.lastRandomProgLang && pool.length > 1) {
+          pool = pool.filter(l => l !== this.lastRandomProgLang);
+        }
+        lang = pool[Math.floor(Math.random() * pool.length)];
+        this.lastRandomProgLang = lang;
+      }
+
+      const pDiff = (state.programmingDifficulty || "intermediate").toLowerCase();
+      const langGroup = PROGRAMMING_PASSAGES[lang] || PROGRAMMING_PASSAGES.javascript;
+      const snippetPool = langGroup[pDiff] || langGroup.intermediate || langGroup.beginner;
+
+      let pIdx = Math.floor(Math.random() * snippetPool.length);
+      const progKey = `${lang}-${pDiff}`;
+      if (!this.lastProgIndices) this.lastProgIndices = {};
+      if (snippetPool.length > 1 && pIdx === this.lastProgIndices[progKey]) {
+        pIdx = (pIdx + 1 + Math.floor(Math.random() * (snippetPool.length - 1))) % snippetPool.length;
+      }
+      this.lastProgIndices[progKey] = pIdx;
+      this.passageText = snippetPool[pIdx];
+      this.activeProgrammingLanguage = lang;
+      this.activeProgrammingDifficulty = pDiff;
     } else {
       const diffKey = state.difficulty === "custom" ? "medium" : (state.difficulty || "medium");
       const pool = PASSAGES[diffKey] || PASSAGES.medium;
@@ -156,6 +358,8 @@ class TypingEngine {
       }
       this.lastPassageIndices[diffKey] = idx;
       this.passageText = pool[idx];
+      this.activeProgrammingLanguage = null;
+      this.activeProgrammingDifficulty = null;
     }
 
     this.chars = this.passageText.split("");
@@ -184,7 +388,11 @@ class TypingEngine {
       const span = document.createElement("span");
       span.className = "char";
       span.id = `char-${i}`;
-      span.textContent = this.chars[i];
+      if (this.chars[i] === "\n") {
+        span.textContent = "↵\n";
+      } else {
+        span.textContent = this.chars[i];
+      }
       if (i === 0) span.classList.add("char-current");
       frag.appendChild(span);
     }
@@ -227,6 +435,10 @@ class TypingEngine {
           this.trackKey(targetKey, false);
           if (window.TypeESettings) window.TypeESettings.synth.playKey(false);
         }
+
+        if (window.TypeEKeyboard) {
+          window.TypeEKeyboard.flashKeyFeedback(typedChar, isMatch);
+        }
       }
     } else if (diff < 0) {
       this.recalculateAccurateCounts(currentVal);
@@ -268,24 +480,30 @@ class TypingEngine {
     for (let i = 0; i < spans.length; i++) {
       const span = spans[i];
       span.className = "char";
+      const isNewline = (this.chars[i] === "\n");
+      const isSpace = (this.chars[i] === " ");
 
       if (i < currentVal.length) {
         if (currentVal[i] === this.chars[i]) {
           span.classList.add("char-correct");
-          if (this.chars[i] === " ") span.textContent = " ";
+          span.textContent = isNewline ? "↵\n" : (isSpace ? " " : this.chars[i]);
         } else {
-          if (this.chars[i] === " ") {
+          if (isSpace) {
             span.classList.add("char-space-incorrect");
             span.textContent = "␣";
+          } else if (isNewline) {
+            span.classList.add("char-incorrect");
+            span.textContent = "↵\n";
           } else {
             span.classList.add("char-incorrect");
+            span.textContent = this.chars[i];
           }
         }
       } else if (i === currentVal.length) {
         span.classList.add("char-current");
-        if (this.chars[i] === " ") span.textContent = " ";
+        span.textContent = isNewline ? "↵\n" : (isSpace ? " " : this.chars[i]);
       } else {
-        if (this.chars[i] === " ") span.textContent = " ";
+        span.textContent = isNewline ? "↵\n" : (isSpace ? " " : this.chars[i]);
       }
     }
 
@@ -308,6 +526,13 @@ class TypingEngine {
   handleAuxiliaryKeyDown(e) {
     if (window.TypeEKeyboard) {
       window.TypeEKeyboard.highlightKey(e.key, true);
+    }
+
+    // Allow Enter key to input newline in code snippets
+    if (e.key === "Enter" && this.chars[this.currentIndex] === "\n" && this.inputEl) {
+      e.preventDefault();
+      this.inputEl.value += "\n";
+      this.handleSingleSourceInput(e);
     }
   }
 

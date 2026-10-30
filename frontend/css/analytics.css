@@ -127,3 +127,87 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ==========================================================================
+   PROGRAMMING ANALYTICS SECTION
+   ========================================================================== */
+.programming-analytics-section {
+  border-top: 4px dashed var(--color-black);
+  padding-top: 2rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.prog-lang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.prog-lang-card {
+  border: var(--border-thick);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.prog-lang-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md);
+}
+
+.prog-lang-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px dashed var(--color-muted-bg);
+  padding-bottom: 0.4rem;
+}
+
+.prog-lang-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prog-lang-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.prog-metric-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.prog-metric-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
+.prog-metric-val {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--color-black);
+}
+
+.prog-lang-card.active-lang {
+  border-color: var(--color-black);
+  background: var(--color-surface-alt);
+}
+
+.prog-lang-card.active-lang .prog-lang-title {
+  color: var(--color-accent-blue);
+}

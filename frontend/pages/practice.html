@@ -166,6 +166,29 @@
           <div id="practice-live-errors" class="practice-hud-val" style="color:var(--color-incorrect);">0</div>
         </div>
       </div>
+
+      <!-- 4. ON-SCREEN VIRTUAL HEATMAP KEYBOARD -->
+      <div class="keyboard-card" style="margin-top: 0.5rem;">
+        <div class="kb-top-bar">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <strong style="font-size:0.85rem; letter-spacing:0.02em;">ON-SCREEN KEYBOARD &amp; ERROR HEATMAP</strong>
+            <span id="practice-kb-layout-badge" class="badge badge-yellow">QWERTY</span>
+          </div>
+          <div class="kb-legend">
+            <span>Accuracy:</span>
+            <div class="legend-swatch" style="background:var(--hm-excellent);"></div><span>&gt;97%</span>
+            <div class="legend-swatch" style="background:var(--hm-low);"></div><span>92-97%</span>
+            <div class="legend-swatch" style="background:var(--hm-med);"></div><span>85-92%</span>
+            <div class="legend-swatch" style="background:var(--hm-high);"></div><span>75-85%</span>
+            <div class="legend-swatch" style="background:var(--hm-critical);"></div><span>&lt;75%</span>
+          </div>
+        </div>
+
+        <div id="practice-virtual-keyboard" class="virtual-kb" aria-label="On-Screen Practice Keyboard Heatmap">
+          <!-- Dynamically populated 15-unit virtual keyboard rows -->
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -219,6 +242,7 @@
   <!-- Client-Side Modules -->
   <script src="../js/storage.js"></script>
   <script src="../js/settings.js"></script>
+  <script src="../js/keyboard.js"></script>
   <script src="../js/practice.js"></script>
   <script src="../js/app.js"></script>
 </body>

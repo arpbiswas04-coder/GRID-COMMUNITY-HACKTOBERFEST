@@ -339,12 +339,24 @@
   <div id="modal-results" class="modal-overlay" role="dialog" aria-modal="true">
     <div class="modal-window">
       <div class="modal-header">
-        <h2>🏁 SPRINT RESULTS</h2>
+        <h2 id="modal-title-text">🏁 SPRINT RESULTS</h2>
         <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
       </div>
       <div class="modal-body">
         <div id="race-winner-banner" class="race-outcome-banner winner-player">
           🏆 SPRINT COMPLETE!
+        </div>
+
+        <!-- Programming Meta Badge Strip (displayed strictly during programming races) -->
+        <div id="prog-modal-meta" class="prog-modal-meta" style="display:none; justify-content:space-between; align-items:center; background:var(--color-surface-alt); border:var(--border-thick); padding:0.5rem 0.85rem; font-weight:850; font-size:0.8rem; box-shadow:var(--shadow-sm);">
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <span>LANGUAGE:</span>
+            <span id="prog-modal-lang" class="badge badge-yellow">JAVASCRIPT</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <span>LEVEL:</span>
+            <span id="prog-modal-diff" class="badge badge-dark">INTERMEDIATE</span>
+          </div>
         </div>
 
         <div class="results-grid">
@@ -374,9 +386,10 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" id="btn-results-practice" class="btn-secondary">🎯 Drill Weak Keys</button>
+        <button type="button" id="btn-results-practice" class="btn-secondary">🎯 Practice Drill</button>
         <button type="button" id="btn-results-analytics" class="btn-sm">📊 View Analytics</button>
         <button type="button" id="btn-results-retry" class="btn-primary">⚡ Race Again</button>
+        <a href="home.html" id="btn-results-home" class="btn-sm" style="text-decoration:none; display:inline-flex; align-items:center; background:var(--color-surface); border:var(--border-thick); font-weight:850; padding:0.4rem 0.75rem; box-shadow:var(--shadow-sm); color:var(--color-black);">🏠 Return Home</a>
       </div>
     </div>
   </div>

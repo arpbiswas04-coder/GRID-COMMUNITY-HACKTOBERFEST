@@ -151,6 +151,12 @@ class KeyboardEngine {
     this.container = document.querySelector(containerSelector);
     this.render();
     this.renderWeakKeySuggestions();
+
+    // Update layout badge if present
+    const state = window.TypeEStorage.get();
+    const layout = (state.keyboardLayout || "qwerty").toUpperCase();
+    const badges = document.querySelectorAll("#kb-layout-badge, #practice-kb-layout-badge");
+    badges.forEach(b => { b.textContent = layout; });
   }
 
   render() {
@@ -200,8 +206,10 @@ class KeyboardEngine {
           this.highlightKey(item.key, true);
           setTimeout(() => this.highlightKey(item.key, false), 120);
 
-          if (window.TypeETyping) {
+          if (window.TypeETyping && window.TypeETyping.inputEl && !window.TypeETyping.inputEl.disabled) {
             window.TypeETyping.insertCharFromVirtualKey(item.key);
+          } else if (window.TypeEPractice && window.TypeEPractice.inputEl && !window.TypeEPractice.inputEl.disabled) {
+            window.TypeEPractice.insertCharFromVirtualKey(item.key);
           }
         };
 
@@ -239,7 +247,8 @@ class KeyboardEngine {
   }
 
   updateKeyHeatmap(key) {
-    const el = document.querySelector(`[data-key="${key.toLowerCase()}"]`);
+    const root = this.container || document;
+    const el = root.querySelector(`[data-key="${key.toLowerCase()}"]`);
     if (!el) return;
 
     el.classList.remove("hm-untested", "hm-excellent", "hm-low", "hm-med", "hm-high", "hm-critical");
@@ -260,13 +269,27 @@ class KeyboardEngine {
     if (!keyName) return;
     const translated = this.translateInput(keyName);
     const k = translated.toLowerCase();
-    const el = document.querySelector(`[data-key="${k}"]`) || (keyName === " " ? document.querySelector(`[data-key="space"]`) : null);
+    const root = this.container || document;
+    const el = root.querySelector(`[data-key="${k}"]`) || (keyName === " " ? root.querySelector(`[data-key="space"]`) : null);
     if (el) {
       if (isPressed) {
         el.classList.add("key-pressed");
       } else {
         el.classList.remove("key-pressed");
       }
+    }
+  }
+
+  flashKeyFeedback(keyName, isCorrect) {
+    if (!keyName) return;
+    const translated = this.translateInput(keyName);
+    const k = translated.toLowerCase();
+    const root = this.container || document;
+    const el = root.querySelector(`[data-key="${k}"]`) || (keyName === " " ? root.querySelector(`[data-key="space"]`) : null);
+    if (el) {
+      const cls = isCorrect ? "key-feedback-correct" : "key-feedback-incorrect";
+      el.classList.add(cls);
+      setTimeout(() => el.classList.remove(cls), 160);
     }
   }
 

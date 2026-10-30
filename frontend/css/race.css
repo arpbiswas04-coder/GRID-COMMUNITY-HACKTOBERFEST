@@ -450,6 +450,18 @@
   color: var(--color-black) !important;
 }
 
+.kb-key.key-feedback-correct {
+  background-color: var(--color-correct) !important;
+  color: var(--color-white) !important;
+  transform: translate(1px, 1px);
+}
+
+.kb-key.key-feedback-incorrect {
+  background-color: var(--color-incorrect) !important;
+  color: var(--color-white) !important;
+  transform: translate(1px, 1px);
+}
+
 /* Colourful Error Heatmap Classes */
 .kb-key.hm-untested { background-color: var(--hm-untested); color: var(--color-black); }
 .kb-key.hm-excellent { background-color: var(--hm-excellent); color: var(--color-white); }

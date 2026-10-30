@@ -30,7 +30,26 @@ const DEFAULT_STATE = {
   },
   keyStatistics: {},          // { 'a': { attempts: N, errors: E }, ... }
   testHistory: [],            // Completed sprint records
-  practiceHistory: []         // Dedicated practice session records
+  practiceHistory: [],        // Dedicated practice session records
+
+  // Dedicated Programming Mode State (Completely isolated from Normal typing records)
+  programmingLanguage: "javascript",   // 'javascript' | 'python' | 'c' | 'cpp' | 'html' | 'css' | 'sql' | 'random'
+  programmingDifficulty: "intermediate", // 'beginner' | 'intermediate' | 'advanced'
+  programmingGhostRecords: {           // Independent programming ghost PB timelines by race duration
+    "30": null,
+    "60": null,
+    "120": null
+  },
+  programmingPersonalBests: {
+    highestWPM: 0,
+    bestAccuracy: 0,
+    best30s: 0,
+    best60s: 0,
+    best120s: 0,
+    totalTests: 0,
+    totalCharsTyped: 0
+  },
+  programmingHistory: []               // Dedicated programming sprint history
 };
 
 let appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -46,6 +65,19 @@ function loadState() {
       appState.testHistory = Array.isArray(parsed.testHistory) ? parsed.testHistory : [];
       appState.practiceHistory = Array.isArray(parsed.practiceHistory) ? parsed.practiceHistory : [];
       appState.ghostRecords = parsed.ghostRecords || { "30": null, "60": null, "120": null };
+
+      // Programming state migration & safe defaults
+      appState.programmingLanguage = parsed.programmingLanguage || "javascript";
+      appState.programmingDifficulty = parsed.programmingDifficulty || "intermediate";
+      appState.programmingGhostRecords = parsed.programmingGhostRecords || { "30": null, "60": null, "120": null };
+      appState.programmingPersonalBests = { ...DEFAULT_STATE.programmingPersonalBests, ...(parsed.programmingPersonalBests || {}) };
+      appState.programmingHistory = Array.isArray(parsed.programmingHistory) ? parsed.programmingHistory : [];
+
+      ["30", "60", "120"].forEach(d => {
+        if (appState.programmingGhostRecords[d] === undefined) {
+          appState.programmingGhostRecords[d] = null;
+        }
+      });
 
       // Migration: migrate legacy bestGhostRace or previousSessionRace into duration-specific ghostRecords
       if (parsed.bestGhostRace && parsed.bestGhostRace.timeline && parsed.bestGhostRace.timeline.length > 0) {
@@ -142,6 +174,37 @@ function savePracticeRecord(record) {
   saveState();
 }
 
+// --------------------------------------------------------------------------
+// DEDICATED PROGRAMMING GHOST & RECORD ISOLATION
+// --------------------------------------------------------------------------
+function getProgrammingGhostForDuration(duration) {
+  const d = String(duration || 60);
+  if (appState.programmingGhostRecords && appState.programmingGhostRecords[d]) {
+    return appState.programmingGhostRecords[d];
+  }
+  return null;
+}
+
+function saveProgrammingGhostForDuration(duration, ghostData) {
+  const d = String(duration || 60);
+  if (!appState.programmingGhostRecords) {
+    appState.programmingGhostRecords = { "30": null, "60": null, "120": null };
+  }
+  appState.programmingGhostRecords[d] = ghostData;
+  saveState();
+}
+
+function saveProgrammingRecord(record) {
+  if (!Array.isArray(appState.programmingHistory)) {
+    appState.programmingHistory = [];
+  }
+  appState.programmingHistory.unshift(record);
+  if (appState.programmingHistory.length > 60) {
+    appState.programmingHistory.pop();
+  }
+  saveState();
+}
+
 // Global accessor
 window.TypeEStorage = {
   get: getState,
@@ -150,6 +213,9 @@ window.TypeEStorage = {
   update: updateState,
   getGhostForDuration,
   saveGhostForDuration,
-  savePracticeRecord
+  savePracticeRecord,
+  getProgrammingGhostForDuration,
+  saveProgrammingGhostForDuration,
+  saveProgrammingRecord
 };
 

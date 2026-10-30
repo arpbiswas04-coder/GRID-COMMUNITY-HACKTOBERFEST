@@ -50,142 +50,176 @@
         <!-- Open viewing spacer for headline and mechanical keyboard in home-background.jpeg -->
         <div class="hero-artwork-spacer" aria-hidden="true"></div>
 
-    <!-- CONFIGURATION SECTION: FIVE EQUALLY BALANCED CARDS IN ONE ROW -->
-    <section class="config-section" aria-label="Game Configuration">
-      <div class="config-grid">
+        <!-- Centered balanced wrapper for configuration cards, CTA and footer over the cream artwork base -->
+        <div class="home-content-inner">
 
-        <!-- CARD 1: DIFFICULTY LEVEL -->
-        <div class="config-card">
-          <div class="config-card-header">
-            <span class="config-card-icon">🎯</span>
-            <h2 class="config-card-title">DIFFICULTY LEVEL</h2>
-          </div>
-          <div class="config-options">
-            <button type="button" class="config-btn opt-diff active" data-val="easy">
-              <span>Easy</span>
-              <span class="config-btn-sub">Simple words &amp; short sentences</span>
-            </button>
-            <button type="button" class="config-btn opt-diff" data-val="medium">
-              <span>Medium</span>
-              <span class="config-btn-sub">Normal sentences &amp; punctuation</span>
-            </button>
-            <button type="button" class="config-btn opt-diff" data-val="hard">
-              <span>Hard</span>
-              <span class="config-btn-sub">Complex words &amp; symbols</span>
-            </button>
-            <button type="button" class="config-btn opt-diff" data-val="custom">
-              <span>Custom</span>
-              <span class="config-btn-sub">Type your own custom text</span>
-            </button>
-          </div>
-        </div>
+          <!-- CONFIGURATION SECTION: FIVE EQUALLY BALANCED CARDS IN ONE ROW -->
+          <section class="config-section" aria-label="Game Configuration">
+            <div class="config-grid">
 
-        <!-- CARD 2: SET TIME -->
-        <div class="config-card">
-          <div class="config-card-header">
-            <span class="config-card-icon">⏱️</span>
-            <h2 class="config-card-title">SET TIME</h2>
-          </div>
-          <div class="config-options">
-            <button type="button" class="config-btn opt-time" data-val="30">
-              <span>30 seconds</span>
-              <span class="config-btn-sub">High-speed burst sprint</span>
-            </button>
-            <button type="button" class="config-btn opt-time active" data-val="60">
-              <span>60 seconds</span>
-              <span class="config-btn-sub">Standard circuit race</span>
-            </button>
-            <button type="button" class="config-btn opt-time" data-val="120">
-              <span>120 seconds</span>
-              <span class="config-btn-sub">Endurance speed run</span>
-            </button>
-          </div>
-        </div>
+              <!-- CARD 1: DIFFICULTY LEVEL (With Dedicated Programming Mode) -->
+              <div class="config-card">
+                <div class="config-card-header">
+                  <span class="config-card-icon">🎯</span>
+                  <h2 class="config-card-title">DIFFICULTY LEVEL</h2>
+                </div>
+                <div class="config-options">
+                  <button type="button" class="config-btn opt-diff active" data-val="easy">
+                    <span>Easy</span>
+                    <span class="config-btn-sub">Simple words &amp; short sentences</span>
+                  </button>
+                  <button type="button" class="config-btn opt-diff" data-val="medium">
+                    <span>Medium</span>
+                    <span class="config-btn-sub">Normal sentences &amp; punctuation</span>
+                  </button>
+                  <button type="button" class="config-btn opt-diff" data-val="hard">
+                    <span>Hard</span>
+                    <span class="config-btn-sub">Complex words &amp; symbols</span>
+                  </button>
+                  <button type="button" class="config-btn opt-diff" data-val="programming">
+                    <span style="display:flex; align-items:center; gap:0.4rem;">
+                      <span>Programming</span>
+                      <span class="badge badge-yellow" style="font-size:0.6rem; padding:0.1rem 0.35rem;">CODE</span>
+                    </span>
+                    <span class="config-btn-sub">Practice real-world code snippets, syntax and programming symbols.</span>
+                  </button>
 
-        <!-- CARD 3: CHOICE -->
-        <div class="config-card">
-          <div class="config-card-header">
-            <span class="config-card-icon">📝</span>
-            <h2 class="config-card-title">CHOICE</h2>
-          </div>
-          <div class="config-options">
-            <button type="button" class="config-btn opt-choice active" data-val="default">
-              <span>Default Prompts</span>
-              <span class="config-btn-sub">Authentic curated passages</span>
-            </button>
-            <button type="button" class="config-btn opt-choice" data-val="custom">
-              <span>Custom Text</span>
-              <span class="config-btn-sub">Paste custom training text</span>
-            </button>
+                  <!-- Dedicated Programming Options Panel (Active only when Programming is selected) -->
+                  <div id="programming-config-panel" class="programming-config-panel" style="display: none;">
+                    <div class="prog-config-group">
+                      <label for="prog-lang-select" class="prog-config-label">LANGUAGE</label>
+                      <select id="prog-lang-select" class="prog-select" aria-label="Select Programming Language">
+                        <option value="javascript">JavaScript (ES6+)</option>
+                        <option value="python">Python</option>
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                        <option value="html">HTML5</option>
+                        <option value="css">CSS3</option>
+                        <option value="sql">SQL</option>
+                        <option value="random">🎲 Random Language</option>
+                      </select>
+                    </div>
 
-            <!-- Custom text input displayed strictly when Custom Text is active -->
-            <div id="custom-text-wrapper" class="custom-text-wrapper" style="display: none;">
-              <textarea id="custom-text-input" class="custom-text-box" placeholder="Paste your passage here (min 15 chars)..."></textarea>
+                    <div class="prog-config-group">
+                      <span class="prog-config-label">CODE DIFFICULTY</span>
+                      <div class="prog-diff-pills" role="group" aria-label="Programming Difficulty">
+                        <button type="button" class="prog-diff-pill" data-pdiff="beginner" title="Simple syntax, variables, basic conditions">Beginner</button>
+                        <button type="button" class="prog-diff-pill active" data-pdiff="intermediate" title="Functions, loops, arrays, objects">Interm.</button>
+                        <button type="button" class="prog-diff-pill" data-pdiff="advanced" title="Nested logic, algorithms, data structures">Advanced</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CARD 2: SET TIME -->
+              <div class="config-card">
+                <div class="config-card-header">
+                  <span class="config-card-icon">⏱️</span>
+                  <h2 class="config-card-title">SET TIME</h2>
+                </div>
+                <div class="config-options">
+                  <button type="button" class="config-btn opt-time" data-val="30">
+                    <span>30 seconds</span>
+                    <span class="config-btn-sub">High-speed burst sprint</span>
+                  </button>
+                  <button type="button" class="config-btn opt-time active" data-val="60">
+                    <span>60 seconds</span>
+                    <span class="config-btn-sub">Standard circuit race</span>
+                  </button>
+                  <button type="button" class="config-btn opt-time" data-val="120">
+                    <span>120 seconds</span>
+                    <span class="config-btn-sub">Endurance speed run</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- CARD 3: CHOICE -->
+              <div class="config-card">
+                <div class="config-card-header">
+                  <span class="config-card-icon">📝</span>
+                  <h2 class="config-card-title">CHOICE</h2>
+                </div>
+                <div class="config-options">
+                  <button type="button" class="config-btn opt-choice active" data-val="default">
+                    <span>Default Prompts</span>
+                    <span class="config-btn-sub">Authentic curated passages</span>
+                  </button>
+                  <button type="button" class="config-btn opt-choice" data-val="custom">
+                    <span>Custom Text</span>
+                    <span class="config-btn-sub">Paste custom training text</span>
+                  </button>
+
+                  <!-- Custom text input displayed strictly when Custom Text is active -->
+                  <div id="custom-text-wrapper" class="custom-text-wrapper" style="display: none;">
+                    <textarea id="custom-text-input" class="custom-text-box" placeholder="Paste your passage here (min 15 chars)..."></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CARD 4: KEYBOARD LAYOUT -->
+              <div class="config-card">
+                <div class="config-card-header">
+                  <span class="config-card-icon">⌨️</span>
+                  <h2 class="config-card-title">KEYBOARD LAYOUT</h2>
+                </div>
+                <div class="config-options">
+                  <button type="button" class="config-btn opt-layout active" data-val="qwerty">
+                    <span>QWERTY</span>
+                    <span class="config-btn-sub">Universal standard</span>
+                  </button>
+                  <button type="button" class="config-btn opt-layout" data-val="dvorak">
+                    <span>DVORAK</span>
+                    <span class="config-btn-sub">Ergonomic keyflow</span>
+                  </button>
+                  <button type="button" class="config-btn opt-layout" data-val="colemak">
+                    <span>COLEMAK</span>
+                    <span class="config-btn-sub">Modern touch-typing</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- CARD 5: VISUAL STYLE (Locked to Single Unified Neo-Brutalist Theme) -->
+              <div class="config-card">
+                <div class="config-card-header">
+                  <span class="config-card-icon">🏁</span>
+                  <h2 class="config-card-title">VISUAL STYLE</h2>
+                </div>
+                <div class="config-options">
+                  <div class="config-btn active" style="cursor:default;">
+                    <span>Arcade Neo</span>
+                    <span class="config-btn-sub">High-contrast yellow, bold borders &amp; offset shadows</span>
+                  </div>
+                  <div style="border:var(--border-thin); background:var(--color-surface-alt); padding:0.6rem; font-size:0.75rem; font-weight:750; color:var(--color-muted);">
+                    ✦ Unified arcade aesthetic with 60 FPS SVG circuit telemetry.
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- MAIN CALL-TO-ACTION: ENTER THE ARENA -->
+          <section class="cta-section">
+            <button type="button" id="btn-enter-arena" class="btn-enter-arena">
+              <span>ENTER THE ARENA</span>
+              <span>▶</span>
+            </button>
+          </section>
+
+          <!-- BOTTOM DECORATIVE AREA -->
+          <div class="bottom-branding">
+            <div class="bottom-brand-left">
+              <span>TEAM 4 LOOPS</span>
+              <span>&bull;</span>
+              <span>TYPE.E</span>
+            </div>
+            <div class="bottom-tagline">
+              TYPE &bull; TRACK &bull; IMPROVE
             </div>
           </div>
-        </div>
 
-        <!-- CARD 4: KEYBOARD LAYOUT -->
-        <div class="config-card">
-          <div class="config-card-header">
-            <span class="config-card-icon">⌨️</span>
-            <h2 class="config-card-title">KEYBOARD LAYOUT</h2>
-          </div>
-          <div class="config-options">
-            <button type="button" class="config-btn opt-layout active" data-val="qwerty">
-              <span>QWERTY</span>
-              <span class="config-btn-sub">Universal standard</span>
-            </button>
-            <button type="button" class="config-btn opt-layout" data-val="dvorak">
-              <span>DVORAK</span>
-              <span class="config-btn-sub">Ergonomic keyflow</span>
-            </button>
-            <button type="button" class="config-btn opt-layout" data-val="colemak">
-              <span>COLEMAK</span>
-              <span class="config-btn-sub">Modern touch-typing</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- CARD 5: VISUAL STYLE (Locked to Single Unified Neo-Brutalist Theme) -->
-        <div class="config-card">
-          <div class="config-card-header">
-            <span class="config-card-icon">🏁</span>
-            <h2 class="config-card-title">VISUAL STYLE</h2>
-          </div>
-          <div class="config-options">
-            <div class="config-btn active" style="cursor:default;">
-              <span>Arcade Neo</span>
-              <span class="config-btn-sub">High-contrast yellow, bold borders &amp; offset shadows</span>
-            </div>
-            <div style="border:var(--border-thin); background:var(--color-surface-alt); padding:0.6rem; font-size:0.75rem; font-weight:750; color:var(--color-muted);">
-              ✦ Unified arcade aesthetic with 60 FPS SVG circuit telemetry.
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- MAIN CALL-TO-ACTION: ENTER THE ARENA -->
-    <section class="cta-section">
-      <button type="button" id="btn-enter-arena" class="btn-enter-arena">
-        <span>ENTER THE ARENA</span>
-        <span>▶</span>
-      </button>
-    </section>
-
-    <!-- BOTTOM DECORATIVE AREA -->
-    <div class="bottom-branding">
-      <div class="bottom-brand-left">
-        <span>TEAM 4 LOOPS</span>
-        <span>&bull;</span>
-        <span>TYPE.E</span>
-      </div>
-      <div class="bottom-tagline">
-        TYPE &bull; TRACK &bull; IMPROVE
-      </div>
-    </div>
+        </div> <!-- .home-content-inner -->
 
       </div> <!-- .home-hero-stage -->
     </div> <!-- .home-stage-wrapper -->

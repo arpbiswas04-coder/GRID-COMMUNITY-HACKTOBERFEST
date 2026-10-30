@@ -84,7 +84,7 @@ function initHomePage() {
     customInput.value = state.customPassage;
   }
 
-  // CRITICAL FIX: Custom text box display is strictly governed by promptChoice
+  // Custom text box display is strictly governed by promptChoice
   const updateCustomVisibility = () => {
     if (customWrapper) {
       customWrapper.style.display = (state.promptChoice === "custom") ? "flex" : "none";
@@ -92,7 +92,42 @@ function initHomePage() {
   };
   updateCustomVisibility();
 
-  // CARD 1: DIFFICULTY LEVEL (Independent: does NOT touch promptChoice)
+  // Programming mode options panel visibility & state
+  const progPanel = document.querySelector("#programming-config-panel");
+  const progLangSelect = document.querySelector("#prog-lang-select");
+  const updateProgrammingPanelVisibility = () => {
+    if (progPanel) {
+      progPanel.style.display = (state.difficulty === "programming") ? "flex" : "none";
+    }
+  };
+  updateProgrammingPanelVisibility();
+
+  if (progLangSelect) {
+    progLangSelect.value = state.programmingLanguage || "javascript";
+    progLangSelect.onchange = () => {
+      state.programmingLanguage = progLangSelect.value;
+      window.TypeEStorage.save();
+    };
+  }
+
+  const setProgDiffActive = (val) => {
+    document.querySelectorAll(".prog-diff-pill").forEach(pill => {
+      pill.classList.toggle("active", pill.getAttribute("data-pdiff") === String(val));
+    });
+  };
+  setProgDiffActive(state.programmingDifficulty || "intermediate");
+
+  document.querySelectorAll(".prog-diff-pill").forEach(pill => {
+    pill.onclick = (e) => {
+      e.preventDefault();
+      const pdiff = pill.dataset.pdiff;
+      setProgDiffActive(pdiff);
+      state.programmingDifficulty = pdiff;
+      window.TypeEStorage.save();
+    };
+  });
+
+  // CARD 1: DIFFICULTY LEVEL (Easy, Medium, Hard, Programming)
   document.querySelectorAll(".opt-diff").forEach(btn => {
     btn.onclick = (e) => {
       e.preventDefault();
@@ -100,6 +135,7 @@ function initHomePage() {
       setActive(".opt-diff", val);
       state.difficulty = val;
       window.TypeEStorage.save();
+      updateProgrammingPanelVisibility();
     };
   });
 

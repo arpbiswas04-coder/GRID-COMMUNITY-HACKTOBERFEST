@@ -263,12 +263,18 @@ class PracticeEngine {
       this.inputEl.value = "";
       this.inputEl.oninput = (e) => this.handleTypingInput(e);
       this.inputEl.onkeydown = (e) => this.handleTypingKeyDown(e);
+      this.inputEl.onkeyup = (e) => this.handleTypingKeyUp(e);
     }
 
     if (this.displayEl) {
       this.displayEl.onclick = () => {
         if (this.inputEl) this.inputEl.focus();
       };
+    }
+
+    // 6. Dedicated On-Screen Heatmap Keyboard
+    if (window.TypeEKeyboard) {
+      window.TypeEKeyboard.init("#practice-virtual-keyboard");
     }
   }
 
@@ -509,6 +515,11 @@ class PracticeEngine {
           this.trackKey(targetKey, false);
           if (window.TypeESettings) window.TypeESettings.synth.playKey(false);
         }
+
+        // Real-time on-screen keyboard feedback (Green for match, Red for error)
+        if (window.TypeEKeyboard) {
+          window.TypeEKeyboard.flashKeyFeedback(typedChar, isMatch);
+        }
       }
     } else if (diff < 0) {
       // Backspace
@@ -535,6 +546,10 @@ class PracticeEngine {
   }
 
   handleTypingKeyDown(e) {
+    if (window.TypeEKeyboard) {
+      window.TypeEKeyboard.highlightKey(e.key, true);
+    }
+
     if (e.key === "Tab") {
       e.preventDefault();
       this.generateNewDrill();
@@ -542,6 +557,25 @@ class PracticeEngine {
       e.preventDefault();
       this.restartDrill();
     }
+  }
+
+  handleTypingKeyUp(e) {
+    if (window.TypeEKeyboard) {
+      window.TypeEKeyboard.highlightKey(e.key, false);
+    }
+  }
+
+  insertCharFromVirtualKey(char) {
+    if (this.status === "COMPLETE" || !this.inputEl) return;
+    if (char === "Backspace") {
+      this.inputEl.value = this.inputEl.value.slice(0, -1);
+    } else if (char === "Space") {
+      this.inputEl.value += " ";
+    } else if (char.length === 1) {
+      this.inputEl.value += char;
+    }
+    this.handleTypingInput();
+    this.inputEl.focus();
   }
 
   trackKey(key, isCorrect) {
@@ -556,6 +590,10 @@ class PracticeEngine {
       state.keyStatistics[key].errors++;
     }
     window.TypeEStorage.save();
+
+    if (window.TypeEKeyboard) {
+      window.TypeEKeyboard.updateKeyHeatmap(key);
+    }
   }
 
   updateHighlights(currentVal) {
